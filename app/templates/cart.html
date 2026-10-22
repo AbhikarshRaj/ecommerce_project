@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Your cart | MarketLane</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/cart.css') }}">
+  <script defer src="{{ url_for('static',filename='js/cart.js') }}"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to cart</a>
+<header class="cart-header"><div class="container cart-header-inner">
+  <a class="brand" href="{{ url_for('catalog') }}">Market<span>Lane</span></a>
+  <a class="back-to-shop" href="{{ url_for('catalog') }}">← Continue shopping</a>
+  <a class="cart-button" id="cart-button" href="{{ url_for('cart.cart_page') }}" aria-label="Shopping cart">
+    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3h2l2.5 12h10L21 6H6"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg>
+    <span>Cart</span><span class="cart-count">0</span>
+  </a>
+</div></header>
+<main class="container cart-main" id="main" data-cart-page>
+  <span class="eyebrow section-eyebrow">YOUR EVERYDAY FINDS</span>
+  <div class="cart-title"><h1>Your shopping cart</h1><span id="cart-item-label">Loading…</span></div>
+  <div id="cart-message" class="cart-message" role="status" aria-live="polite" hidden></div>
+  <div class="cart-toolbar">
+    <div><button type="button" data-cart-action="undo" disabled>↶ Undo</button>
+    <button type="button" data-cart-action="redo" disabled>↷ Redo</button></div>
+    <button class="text-danger" type="button" id="clear-cart" disabled>Clear cart</button>
+  </div>
+  <div id="cart-loading" role="status">Loading your saved cart…</div>
+  <section class="cart-empty" id="cart-empty" hidden>
+    <span class="empty-bag" aria-hidden="true">＋</span>
+    <h2>Your cart is empty</h2><p>Find something you like and add it to your cart.</p>
+    <a class="button button-dark" href="{{ url_for('catalog') }}">Browse products</a>
+  </section>
+  <div class="cart-layout" id="cart-layout" hidden>
+    <section aria-label="Items in your cart"><div id="cart-items"></div>
+      <details class="cart-history"><summary>Recent cart changes</summary>
+      <p>Undo reverses the latest change. Up to 100 changes are retained.</p>
+      <ol id="cart-history-list"></ol></details>
+    </section>
+    <aside class="order-summary"><h2>Cart summary</h2>
+      <div class="summary-line"><span>Items subtotal</span><strong id="cart-subtotal">₹0.00</strong></div>
+      <p class="summary-note">Delivery charges and any additional taxes are not calculated at this stage.</p>
+      <div class="summary-total"><span>Subtotal</span><strong id="cart-total">₹0.00</strong></div>
+      <p class="stock-note">Items in your cart are not reserved. Prices and availability are checked when the cart loads.</p>
+      <button class="checkout-pending" type="button" disabled>Checkout — coming next</button>
+      <p class="summary-note">This cart does not place an order or take payment.</p>
+    </aside>
+  </div>
+  <button type="button" id="cart-retry" class="button button-dark" hidden>Retry loading cart</button>
+</main>
+<dialog id="clear-dialog" class="clear-dialog">
+  <h2>Clear your cart?</h2><p>All items will be removed. You can undo this change.</p>
+  <form method="dialog"><button value="cancel">Keep items</button><button value="confirm" class="confirm-clear">Clear cart</button></form>
+</dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

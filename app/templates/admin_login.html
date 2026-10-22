@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin sign in{% endblock %}
+{% block content %}
+<section class="panel login-panel">
+  <span class="eyebrow">STORE MANAGEMENT</span><h1>Welcome back.</h1>
+  <p class="muted">Sign in to manage your product catalog.</p>
+  {% if configured %}
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="password">Administrator password</label>
+    <input id="password" name="password" type="password" required autocomplete="current-password" autofocus>
+    <button type="submit">Sign in</button>
+  </form>
+  {% else %}
+  <p>Set your administrator password in the project terminal:</p>
+  <code>python -m flask --app run set-admin-password</code>
+  <p class="muted">Then refresh this page.</p>
+  {% endif %}
+</section>
+{% endblock %}

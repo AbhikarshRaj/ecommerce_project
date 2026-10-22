@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Catalog admin{% endblock %} | MarketLane</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <script defer src="{{ url_for('static',filename='js/admin.js') }}"></script>
+</head>
+<body>
+<header class="admin-header"><div class="shell header-row">
+  <a class="brand" href="{{ url_for('catalog') }}">MarketLane <small>ADMIN</small></a>
+  <div class="header-actions"><a href="{{ url_for('catalog') }}">View storefront ↗</a>
+  {% if session.get('admin_revision') %}
+  <form method="post" action="{{ url_for('admin.logout') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="secondary" type="submit">Sign out</button>
+  </form>{% endif %}</div>
+</div></header>
+<main class="shell">
+{% for kind, message in get_flashed_messages(with_categories=true) %}
+<div class="notice {{ kind }}" role="{{ 'alert' if kind == 'error' else 'status' }}">{{ message }}</div>
+{% endfor %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

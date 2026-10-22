@@ -1,0 +1,16 @@
+{% for product_id, product in products.items() %}
+<article class="product-card" data-name="{{ product.name|lower }}" data-category="{{ product.category|lower }}">
+  <div class="product-image-wrap">
+    <span class="image-placeholder" aria-hidden="true">{{ product.name[0] }}</span>
+    <img class="product-image" src="{{ url_for('static',filename=product.image_path) }}" alt="{{ product.name }}" loading="lazy" decoding="async" width="400" height="400">
+    {% if product.stock == 0 %}<span class="stock-badge sold-out">Out of stock</span>
+    {% elif product.stock <= 5 %}<span class="stock-badge">Only {{ product.stock }} left</span>{% endif %}
+  </div>
+  <div class="product-details">
+    <p class="product-category">{{ product.category }}{% if product.subcategory %} / {{ product.subcategory }}{% endif %}</p>
+    <h3>{{ product.name }}</h3>
+    <div class="product-bottom"><p class="price">₹{{ product.price_paise // 100 }}.{{ '%02d'|format(product.price_paise % 100) }}</p>
+    <span class="availability">{{ 'In stock' if product.stock > 0 else 'Unavailable' }}</span></div>
+  </div>
+</article>
+{% endfor %}

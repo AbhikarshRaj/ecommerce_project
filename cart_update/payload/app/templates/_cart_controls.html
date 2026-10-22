@@ -1,0 +1,10 @@
+<div class="product-cart-controls" data-cart-product="{{ product_id }}" data-stock="{{ product.stock }}">
+  <button class="add-cart-button" type="button" data-cart-action="add" data-product-id="{{ product_id }}" disabled aria-label="Add {{ product.name }} to cart">
+    {{ 'Out of stock' if product.stock == 0 else 'Add to cart' }}
+  </button>
+  <div class="quantity-stepper product-stepper" hidden>
+    <button type="button" data-cart-action="decrement" data-product-id="{{ product_id }}" aria-label="Decrease {{ product.name }} quantity" disabled>−</button>
+    <span class="product-cart-quantity" aria-label="Quantity in cart">0</span>
+    <button type="button" data-cart-action="increment" data-product-id="{{ product_id }}" aria-label="Increase {{ product.name }} quantity" disabled>+</button>
+  </div>
+</div>
