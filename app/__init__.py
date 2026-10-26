@@ -1,7 +1,7 @@
 import secrets
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, session, abort
-from .database import get_db, close_db, initialize
+from .database import get_db, close_db, initialize, clean_name
 from .catalog_store import CatalogStore
 
 
@@ -71,6 +71,31 @@ def create_app(test_config=None):
         products = app.extensions["catalog_store"].select(
             selected_id("category"), selected_id("subcategory"), request.args.get("q", "")[:200])
         return jsonify(html=render_template("_product_cards.html", products=products), count=len(products))
+
+    @app.post('/contact')
+    def submit_contact():
+        name = clean_name(request.form.get('name', ''))
+        email = request.form.get('email', '').strip()
+        subject = clean_name(request.form.get('subject', ''))
+        message = request.form.get('message', '').strip()
+
+        if not name or len(name) > 100:
+            return jsonify(success=False, error='Please enter your name (up to 100 characters).'), 400
+        if not email or '@' not in email or len(email) > 120:
+            return jsonify(success=False, error='Please enter a valid email address.'), 400
+        if not message or len(message) < 5 or len(message) > 2000:
+            return jsonify(success=False, error='Message must be between 5 and 2000 characters.'), 400
+
+        db = get_db()
+        with db:
+            db.execute(
+                'INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
+                (name, email, subject[:120], message)
+            )
+        return jsonify(
+            success=True,
+            message=f'Thank you, {name}! Your message has been received. Our team will get back to you shortly.'
+        )
 
     @app.errorhandler(413)
     def too_large(_error):

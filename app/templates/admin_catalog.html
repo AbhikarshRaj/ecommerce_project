@@ -44,11 +44,46 @@
   </li>{% else %}<li>No categories yet.</li>{% endfor %}</ul>
 </aside>
 </div>
-<section class="panel inventory"><h2>Saved products</h2><div class="table-scroll"><table>
-<thead><tr><th scope="col">Product</th><th scope="col">Category</th><th scope="col">Subcategory</th><th scope="col">Price</th><th scope="col">Stock</th></tr></thead>
-<tbody>{% for id, p in products.items() %}<tr><td>{{ p.name }}</td><td>{{ p.category }}</td><td>{{ p.subcategory or '—' }}</td><td>₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td><td>{{ p.stock }}</td></tr>
-{% else %}<tr><td colspan="5">Your first product will appear here.</td></tr>{% endfor %}</tbody>
-</table></div></section>
+
+<section class="panel inventory">
+  <h2>Saved products</h2>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Category</th>
+          <th scope="col">Subcategory</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, p in products.items() %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ p.category }}</td>
+          <td>{{ p.subcategory or '—' }}</td>
+          <td>₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td>
+          <td>{{ p.stock }}</td>
+          <td>
+            <a class="button secondary"
+               href="{{ url_for('admin.edit_product', pid=id) }}">
+              Edit
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6">Your first product will appear here.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <datalist id="category-options">{% for c in categories %}<option value="{{ c.name }}"></option>{% endfor %}</datalist>
 <script type="application/json" id="admin-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
 {% endblock %}

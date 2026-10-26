@@ -192,3 +192,147 @@ def add_product():
         return render_template("admin_catalog.html", **dashboard_context(request.form.to_dict())), 400
     flash(f"{name} was added. It is now available on the storefront.", "success")
     return redirect(url_for("admin.dashboard"))
+
+
+@admin.route("/products/<pid>/edit", methods=["GET", "POST"])
+@login_required
+def edit_product(pid):
+    db = get_db()
+
+    product = db.execute("""
+        SELECT p.*, c.name AS category, s.name AS subcategory
+        FROM products p
+        JOIN categories c ON c.id = p.category_id
+        LEFT JOIN subcategories s ON s.id = p.subcategory_id
+        WHERE p.id = ?
+    """, (pid,)).fetchone()
+
+    if product is None:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    if request.method == "GET":
+        return render_template(
+            "admin_edit_product.html",
+            product=dict(product),
+            categories=[
+                dict(r) for r in db.execute(
+                    "SELECT * FROM categories ORDER BY name COLLATE NOCASE"
+                )
+            ],
+            subcategories=[
+                dict(r) for r in db.execute(
+                    "SELECT * FROM subcategories ORDER BY name COLLATE NOCASE"
+                )
+            ],
+        )
+
+    image_file = None
+
+    try:
+        name = validated_name("name", maximum=120)
+        category = validated_name("category")
+        subcategory = validated_name("subcategory", required=False)
+
+        raw_price = request.form.get("price", "").strip()
+
+        if len(raw_price) > 20:
+            raise ValueError("Enter a valid price.")
+
+        try:
+            price = Decimal(raw_price)
+
+            if not price.is_finite() or price < 0 or price > 10_000_000:
+                raise ValueError("Price must be between ₹0 and ₹1,00,00000.")
+
+            paise = price * 100
+
+            if paise != paise.to_integral_value():
+                raise ValueError("Price can have at most two decimal places.")
+
+        except InvalidOperation:
+            raise ValueError("Enter a valid price.") from None
+
+        raw_stock = request.form.get("stock", "").strip()
+
+        if (
+            not raw_stock.isascii()
+            or not raw_stock.isdigit()
+            or len(raw_stock) > 7
+            or int(raw_stock) > 1_000_000
+        ):
+            raise ValueError("Stock must be between 0 and 1,000,000.")
+
+        uploaded_image = request.files.get("image")
+
+        if uploaded_image and uploaded_image.filename:
+            image_path, image_file = save_image(uploaded_image)
+        else:
+            image_path = product["image_path"]
+
+        with db:
+            parent = category_id(db, category)
+            child = subcategory_id(db, parent, subcategory)
+
+            db.execute("""
+                UPDATE products
+                SET name = ?,
+                    category_id = ?,
+                    subcategory_id = ?,
+                    price_paise = ?,
+                    stock = ?,
+                    image_path = ?
+                WHERE id = ?
+            """, (
+                name,
+                parent,
+                child,
+                int(paise),
+                int(raw_stock),
+                image_path,
+                pid,
+            ))
+
+    except (ValueError, sqlite3.Error, OSError) as error:
+        if image_file:
+            image_file.unlink(missing_ok=True)
+
+        if not isinstance(error, ValueError):
+            current_app.logger.exception("Product update failed")
+
+        flash(
+            str(error) if isinstance(error, ValueError)
+            else "Could not update the product. Please try again.",
+            "error",
+        )
+
+        return redirect(url_for("admin.edit_product", pid=pid))
+
+    flash(f"{name} was updated successfully.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+@admin.post("/products/<pid>/delete")
+@login_required
+def delete_product(pid):
+    db = get_db()
+    product = db.execute("SELECT id, name, image_path FROM products WHERE id = ?", (pid,)).fetchone()
+
+    if product is None:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    try:
+        with db:
+            db.execute("DELETE FROM products WHERE id = ?", (pid,))
+
+        if product["image_path"] and product["image_path"].startswith("uploads/products/"):
+            image_file = Path(current_app.static_folder) / product["image_path"]
+            image_file.unlink(missing_ok=True)
+
+        flash(f'"{product["name"]}" was deleted successfully.', "success")
+    except (sqlite3.Error, OSError) as error:
+        current_app.logger.exception("Product deletion failed")
+        flash("Could not delete the product. Please try again.", "error")
+
+    return redirect(url_for("admin.dashboard"))

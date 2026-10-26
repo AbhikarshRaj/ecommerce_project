@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
-          content="Browse electronics, clothing, footwear and everyday essentials.">
-    <title>MarketLane | Everyday finds</title>
+          content="Browse electronics, clothing, footwear, accessories and everyday essentials at MarketLane.">
+    <title>MarketLane | Everyday Essentials & Curated Finds</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -21,13 +21,12 @@
     <a class="skip-link" href="#main">Skip to content</a>
 
     <div class="announcement">
-        Your everyday essentials, in one place.
+        Your everyday essentials, in one place · Free campus pickup available
     </div>
 
     <header class="site-header">
         <div class="container header-content">
-            <a class="brand" href="{{ url_for('catalog') }}"
-               aria-label="MarketLane home">
+            <a class="brand" href="{{ url_for('catalog') }}" aria-label="MarketLane home">
                 <span class="brand-icon" aria-hidden="true">M</span>
                 Market<span>Lane</span>
             </a>
@@ -44,7 +43,7 @@
 
                 <input id="product-search"
                        type="search"
-                       placeholder="Search your next everyday find..."
+                       placeholder="Search electronics, clothing, shoes, essentials..."
                        autocomplete="off">
 
                 <button type="submit">Search</button>
@@ -75,86 +74,166 @@
 
     <main id="main">
         <div class="container">
+            <!-- ========== HERO BANNER CAROUSEL ========== -->
             <section class="hero"
                      aria-label="Featured collections"
-                     aria-roledescription="carousel">
+                     aria-roledescription="carousel"
+                     tabindex="0">
 
+                <!-- Slide 1: Electronics -->
                 <div class="slide slide-electronics"
                      role="group" aria-roledescription="slide"
-                     aria-label="1 of 3: Electronics">
+                     aria-label="1 of 4: Electronics">
                     <img class="banner-image"
-                         src="{{ url_for('static', filename='images/banner-electronics.jpg') }}"
-                         alt="" fetchpriority="high">
+                         src="{{ url_for('static', filename='images/banners/banner-electronics.jpg') }}"
+                         alt="Modern electronic workspace setup with laptop, mechanical keyboard, and headphones"
+                         fetchpriority="high">
 
                     <div class="hero-copy">
                         <span class="eyebrow">SMARTER EVERYDAY</span>
                         <h1>Small upgrades.<br>Big possibilities.</h1>
-                        <p>Explore electronics that make work,
-                           play and everything between feel easier.</p>
-                        <button class="button button-light"
+                        <p>Explore electronics and computer accessories crafted to make work, study, and play effortless.</p>
+                        <button class="button button-light banner-cta"
                                 data-shop-category="electronics">
                             Explore electronics <span aria-hidden="true">↗</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- Slide 2: Clothing -->
                 <div class="slide slide-fashion" hidden
                      role="group" aria-roledescription="slide"
-                     aria-label="2 of 3: Clothing">
+                     aria-label="2 of 4: Clothing">
                     <img class="banner-image"
-                         src="{{ url_for('static', filename='images/banner-fashion.jpg') }}"
-                         alt="">
+                         src="{{ url_for('static', filename='images/banners/banner-fashion.jpg') }}"
+                         alt="Minimalist casual apparel and contemporary wardrobe essentials">
 
                     <div class="hero-copy">
                         <span class="eyebrow">YOUR EVERYDAY EDIT</span>
                         <h2>Comfort meets<br>your kind of style.</h2>
-                        <p>Discover clothing for busy mornings,
-                           easy weekends and everything ahead.</p>
-                        <button class="button button-light"
+                        <p>Discover breathable cotton tees, versatile layers, and relaxed fits tailored for your schedule.</p>
+                        <button class="button button-light banner-cta"
                                 data-shop-category="clothing">
                             Explore clothing <span aria-hidden="true">↗</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- Slide 3: Footwear -->
                 <div class="slide slide-footwear" hidden
                      role="group" aria-roledescription="slide"
-                     aria-label="3 of 3: Footwear">
+                     aria-label="3 of 4: Footwear">
                     <img class="banner-image"
-                         src="{{ url_for('static', filename='images/banner-footwear.jpg') }}"
-                         alt="">
+                         src="{{ url_for('static', filename='images/banners/banner-footwear.jpg') }}"
+                         alt="Athletic and casual sneakers engineered for comfort and movement">
 
                     <div class="hero-copy">
                         <span class="eyebrow">MAKE YOUR NEXT MOVE</span>
                         <h2>A fresh start.<br>With every step.</h2>
-                        <p>Find footwear made for your everyday plans
-                           and unexpected adventures.</p>
-                        <button class="button button-light"
+                        <p>Find everyday footwear and sneakers made for your daily commute and unexpected adventures.</p>
+                        <button class="button button-light banner-cta"
                                 data-shop-category="footwear">
                             Explore footwear <span aria-hidden="true">↗</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- Slide 4: Stationery & Study Essentials -->
+                <div class="slide slide-stationery" hidden
+                     role="group" aria-roledescription="slide"
+                     aria-label="4 of 4: Stationery">
+                    <img class="banner-image"
+                         src="{{ url_for('static', filename='images/banners/banner-stationery.jpg') }}"
+                         alt="Hardcover notebook, writing pens, and organized study desk stationery">
+
+                    <div class="hero-copy">
+                        <span class="eyebrow">DESIGNED FOR FOCUS</span>
+                        <h2>Tools crafted for<br>your best work.</h2>
+                        <p>Hardcover notebooks, pens, and desk companions designed to keep thoughts clear and organized.</p>
+                        <button class="button button-light banner-cta"
+                                data-shop-category="stationery">
+                            Explore stationery <span aria-hidden="true">↗</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls: Indicator Dots & Action Buttons -->
                 <div class="hero-controls">
-                    <div class="slide-dots" aria-label="Choose a banner">
+                    <div class="slide-dots" aria-label="Choose a banner slide">
                         <button class="slide-dot active" data-slide="0"
-                                aria-label="Show electronics banner"
+                                aria-label="Show slide 1 of 4: Electronics"
                                 aria-current="true"></button>
                         <button class="slide-dot" data-slide="1"
-                                aria-label="Show clothing banner"></button>
+                                aria-label="Show slide 2 of 4: Clothing"></button>
                         <button class="slide-dot" data-slide="2"
-                                aria-label="Show footwear banner"></button>
+                                aria-label="Show slide 3 of 4: Footwear"></button>
+                        <button class="slide-dot" data-slide="3"
+                                aria-label="Show slide 4 of 4: Stationery"></button>
                     </div>
 
                     <div class="slide-actions">
-                        <button id="previous-slide" aria-label="Previous banner">←</button>
-                        <button id="toggle-slides" aria-label="Pause slideshow">Ⅱ</button>
-                        <button id="next-slide" aria-label="Next banner">→</button>
+                        <button id="previous-slide" aria-label="Previous banner" title="Previous slide (Left Arrow)">←</button>
+                        <button id="toggle-slides" aria-label="Pause slideshow" title="Pause / Play slideshow">Ⅱ</button>
+                        <button id="next-slide" aria-label="Next banner" title="Next slide (Right Arrow)">→</button>
                     </div>
                 </div>
             </section>
 
+            <!-- ========== CATEGORY CARDS SECTION ========== -->
+            <section class="category-cards-section" id="categories" aria-labelledby="categories-heading">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow section-eyebrow">CURATED COLLECTIONS</span>
+                        <h2 id="categories-heading">Shop by Category</h2>
+                    </div>
+                    <p class="section-desc">Explore our top product lines designed for everyday convenience</p>
+                </div>
+
+                <div class="category-grid">
+                    {% for cat in categories %}
+                    <a href="{{ url_for('catalog') }}?category={{ cat.id }}#products"
+                       class="category-card"
+                       data-category-card="{{ cat.id }}"
+                       aria-label="Browse {{ cat.name }} products">
+                        <div class="category-card-icon">
+                            {% if 'electronic' in cat.name.lower() %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            {% elif 'cloth' in cat.name.lower() or 'fashion' in cat.name.lower() %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+                            </svg>
+                            {% elif 'foot' in cat.name.lower() or 'shoe' in cat.name.lower() %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 18v-4a4 4 0 0 1 4-4h2l3 3h3a4 4 0 0 1 4 4v1H4z"></path>
+                                <path d="M4 18h16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+                            </svg>
+                            {% elif 'access' in cat.name.lower() %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            {% else %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        <div class="category-card-info">
+                            <h3 class="category-card-title">{{ cat.name }}</h3>
+                            <span class="category-card-link">View collection <span aria-hidden="true">→</span></span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- ========== PRODUCTS SECTION ========== -->
             <section class="products-section" id="products"
                      aria-labelledby="products-heading">
                 <div class="section-heading">
@@ -171,68 +250,203 @@
                     <label for="subcategory-filter">Subcategory</label>
                     <select id="subcategory-filter"><option value="">All subcategories</option></select>
                 </div>
-                <div class="product-grid">
+
+                <div class="product-grid" aria-live="polite">
                     {% include '_product_cards.html' %}
                 </div>
 
                 <div class="empty-state" id="empty-state" hidden>
                     <h3>No matching products</h3>
                     <p>Try another search or browse all our categories.</p>
-                    <button class="button button-dark" id="reset-filters">
+                    <button class="button button-dark" id="reset-filters" type="button">
                         Clear filters
                     </button>
                 </div>
             </section>
 
-            <section class="about-section" id="about"
-                     aria-labelledby="about-heading">
-                <div>
-                    <span class="eyebrow section-eyebrow">HELLO, WE’RE MARKETLANE</span>
-                    <h2 id="about-heading">A little less searching.<br>A little more finding.</h2>
+            <!-- ========== ABOUT US SECTION ========== -->
+            <section class="about-section" id="about" aria-labelledby="about-heading">
+                <div class="about-hero">
+                    <div class="about-lead">
+                        <span class="eyebrow section-eyebrow">HELLO, WE’RE MARKETLANE</span>
+                        <h2 id="about-heading">A little less searching.<br>A little more finding.</h2>
+                        <p class="about-intro">
+                            MarketLane brings electronics, clothing, footwear, and everyday essentials into one
+                            clean, responsive catalog. Designed as a practical demonstration of thoughtful software engineering,
+                            every interaction is powered by efficient algorithms and resilient persistent storage.
+                        </p>
+                    </div>
                 </div>
-                <p>
-                    MarketLane brings electronics, clothing, footwear
-                    and everyday essentials into one easy-to-browse catalog.
-                    This student-built store explores how thoughtful data
-                    structures can support a simple shopping experience.
-                </p>
+
+                <div class="about-features">
+                    <div class="about-feature-card">
+                        <div class="feature-icon" aria-hidden="true">⚡</div>
+                        <h3>O(1) Indexed Lookups</h3>
+                        <p>Instant category filtering and product queries backed by in-memory hash mappings and set intersections.</p>
+                    </div>
+
+                    <div class="about-feature-card">
+                        <div class="feature-icon" aria-hidden="true">🛡️</div>
+                        <h3>Persistent Integrity</h3>
+                        <p>Transactional database consistency ensures accurate stock balances and zero overselling.</p>
+                    </div>
+
+                    <div class="about-feature-card">
+                        <div class="feature-icon" aria-hidden="true">🌐</div>
+                        <h3>100% Local & Accessible</h3>
+                        <p>Operates completely offline with full keyboard navigation, screen-reader semantics, and responsive design.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== CONTACT US SECTION ========== -->
+            <section class="contact-section" id="contact" aria-labelledby="contact-heading">
+                <div class="contact-container">
+                    <div class="contact-info-panel">
+                        <span class="eyebrow section-eyebrow">GET IN TOUCH</span>
+                        <h2 id="contact-heading">We’d love to hear from you.</h2>
+                        <p class="contact-text">
+                            Have questions about our products, feedback on the store, or project inquiries?
+                            Drop us a message and our team will get back to you promptly.
+                        </p>
+
+                        <div class="contact-details-list">
+                            <div class="contact-detail-item">
+                                <div class="detail-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <strong>Email us</strong>
+                                    <p><a href="mailto:support@marketlane.local">support@marketlane.local</a></p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <strong>Call us</strong>
+                                    <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <strong>Campus Store</strong>
+                                    <p>Tech Hub Building 3, MarketLane Campus</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <strong>Support Hours</strong>
+                                    <p>Monday – Saturday: 9:00 AM – 7:00 PM IST</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-panel">
+                        <form id="contact-form" class="contact-form" novalidate>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group">
+                                <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
+                                <input type="text" id="contact-name" name="name" required
+                                       placeholder="e.g. Alex Johnson" maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact-email">Email Address <span aria-hidden="true">*</span></label>
+                                <input type="email" id="contact-email" name="email" required
+                                       placeholder="name@example.com" maxlength="120">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact-subject">Inquiry Type</label>
+                                <select id="contact-subject" name="subject">
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Product Availability">Product Availability</option>
+                                    <option value="Cart & Order Support">Cart & Order Support</option>
+                                    <option value="DSA Project Feedback">DSA Project Feedback</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+                                <textarea id="contact-message" name="message" rows="4" required
+                                          placeholder="Write your question or comment here..." maxlength="2000"></textarea>
+                            </div>
+
+                            <button type="submit" id="contact-submit-btn" class="button button-dark contact-submit">
+                                <span>Send message</span>
+                                <span aria-hidden="true">→</span>
+                            </button>
+
+                            <div id="contact-confirmation" class="contact-confirmation" role="alert" hidden></div>
+                        </form>
+                    </div>
+                </div>
             </section>
         </div>
     </main>
 
+    <!-- ========== SITE FOOTER ========== -->
     <footer class="site-footer">
         <div class="container footer-grid">
             <div class="footer-intro">
-                <a class="brand footer-brand" href="{{ url_for('catalog') }}">
+                <a class="brand footer-brand" href="{{ url_for('catalog') }}" aria-label="MarketLane home">
+                    <span class="brand-icon" aria-hidden="true">M</span>
                     Market<span>Lane</span>
                 </a>
-                <p>Everyday essentials.<br>Thoughtfully brought together.</p>
+                <p>Everyday essentials. Thoughtfully brought together with clean data structures and local persistence.</p>
             </div>
 
-            <nav aria-label="Footer navigation">
+            <nav aria-label="Footer quick links">
                 <h2>Explore</h2>
                 <a href="{{ url_for('catalog') }}">Home</a>
                 <a href="#products">Browse products</a>
+                <a href="#categories">Shop categories</a>
                 <a href="#about">About us</a>
                 <a href="#contact">Contact us</a>
-                <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+                <a href="{{ url_for('cart.cart_page') }}">View cart</a>
             </nav>
 
-            <div id="contact">
-                <h2>Contact us</h2>
-                <p>Questions about this project?</p>
-                <p>Contact details will be added here.</p>
+            <div class="footer-contact">
+                <h2>Contact & Admin</h2>
+                <p>Campus Store Hub, Sector 4</p>
+                <p><a href="mailto:support@marketlane.local">support@marketlane.local</a></p>
+                <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+                <p><a class="admin-link" href="{{ url_for('admin.dashboard') }}">Staff Admin Portal →</a></p>
             </div>
         </div>
 
         <div class="container footer-bottom">
-            <span>© <span id="year"></span> MarketLane</span>
-            <span>A student e-commerce project</span>
+            <span>© <span id="year"></span> MarketLane Storefront</span>
+            <span>DSA E-Commerce Implementation · All local assets verified</span>
         </div>
     </footer>
 
     <div class="toast" id="toast" role="status" hidden></div>
-<!-- ADMIN CATALOG UPDATE v1 -->
-<script type="application/json" id="store-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
+    <!-- Store Taxonomy JSON -->
+    <script type="application/json" id="store-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
 </body>
 </html>

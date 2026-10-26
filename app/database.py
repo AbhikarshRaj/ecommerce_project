@@ -38,6 +38,14 @@ BEGIN UPDATE catalog_meta SET revision=revision+1 WHERE id=1; END;
 CREATE TRIGGER IF NOT EXISTS product_delete AFTER DELETE ON products
 BEGIN UPDATE catalog_meta SET revision=revision+1 WHERE id=1; END;
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    subject TEXT,
+    message TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 
@@ -95,5 +103,5 @@ def initialize():
                 db.execute("""INSERT OR IGNORE INTO products
                     (id,name,category_id,price_paise,stock,image_path) VALUES (?,?,?,?,?,?)""",
                     (pid, product["name"], parent, product["price_paise"], product["stock"],
-                     f"images/products/{pid}.jpg"))
+                     f"uploads/products/f36de128e3794fad881b81f669ca8856.jpg" if pid == "P101" else f"images/products/{pid}.jpg"))
             db.execute("INSERT INTO settings VALUES ('seed_imported','yes')")
