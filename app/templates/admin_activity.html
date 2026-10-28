@@ -1,0 +1,97 @@
+
+{% extends "admin_base.html" %}
+
+{% block title %}Activity Logs{% endblock %}
+
+{% block content %}
+
+<h1>Activity Logs</h1>
+<p>View product and shopping cart activity recorded in the database.</p>
+
+<!-- Activity filters -->
+<form method="get" action="{{ url_for('admin.activity_logs') }}">
+
+    <label for="event_type">Event Type</label>
+    <input
+        type="text"
+        id="event_type"
+        name="event_type"
+        value="{{ event_type }}"
+        placeholder="e.g. PRODUCT_CREATED"
+    >
+
+    <label for="entity_type">Entity Type</label>
+    <select id="entity_type" name="entity_type">
+        <option value="">All</option>
+        <option value="product" {% if entity_type == 'product' %}selected{% endif %}>
+            Product
+        </option>
+        <option value="cart" {% if entity_type == 'cart' %}selected{% endif %}>
+            Cart
+        </option>
+    </select>
+
+    <button type="submit">Apply Filters</button>
+    <a href="{{ url_for('admin.activity_logs') }}">Clear Filters</a>
+
+</form>
+
+<hr>
+
+<p>Total matching records: {{ total }}</p>
+
+<!-- Activity table -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date &amp; Time</th>
+            <th>Event Type</th>
+            <th>Entity Type</th>
+            <th>Entity ID</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log['id'] }}</td>
+            <td>{{ log['created_at'] }}</td>
+            <td>{{ log['event_type'] }}</td>
+            <td>{{ log['entity_type'] }}</td>
+            <td>{{ log['entity_id'] }}</td>
+            <td>{{ log['details'] }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No activity logs found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div>
+    <p>Page {{ page }} of {{ total_pages }}</p>
+
+    {% if page > 1 %}
+        <a href="{{ url_for(
+            'admin.activity_logs',
+            page=page-1,
+            event_type=event_type,
+            entity_type=entity_type
+        ) }}">Previous</a>
+    {% endif %}
+
+    {% if page < total_pages %}
+        <a href="{{ url_for(
+            'admin.activity_logs',
+            page=page+1,
+            event_type=event_type,
+            entity_type=entity_type
+        ) }}">Next</a>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -25,6 +25,14 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(subcategory_id, category_id) REFERENCES subcategories(id, category_id)
 );
+CREATE TABLE IF NOT EXISTS activity_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    entity_id TEXT,
+    details TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 CREATE INDEX IF NOT EXISTS products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS products_subcategory ON products(subcategory_id);
 CREATE TABLE IF NOT EXISTS catalog_meta (
@@ -45,7 +53,8 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     subject TEXT,
     message TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+);
+
 """
 
 

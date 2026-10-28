@@ -11,6 +11,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from .database import get_db, clean_name, category_id, subcategory_id
+from .activity import record_event
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -157,45 +158,98 @@ def add_product():
         name = validated_name("name", maximum=120)
         category = validated_name("category")
         subcategory = validated_name("subcategory", required=False)
+
         raw_price = request.form.get("price", "").strip()
         if len(raw_price) > 20:
             raise ValueError("Enter a valid price.")
+
         try:
             price = Decimal(raw_price)
             if not price.is_finite() or price < 0 or price > 10_000_000:
                 raise ValueError("Price must be between ₹0 and ₹1,00,00,000.")
+
             paise = price * 100
             if paise != paise.to_integral_value():
                 raise ValueError("Price can have at most two decimal places.")
+
         except InvalidOperation:
             raise ValueError("Enter a valid price, such as 799.50.") from None
+
         raw_stock = request.form.get("stock", "").strip()
-        if not raw_stock.isascii() or not raw_stock.isdigit() or len(raw_stock) > 7 or int(raw_stock) > 1_000_000:
-            raise ValueError("Stock must be a whole number between 0 and 1,000,000.")
+        if (
+            not raw_stock.isascii()
+            or not raw_stock.isdigit()
+            or len(raw_stock) > 7
+            or int(raw_stock) > 1_000_000
+        ):
+            raise ValueError(
+                "Stock must be a whole number between 0 and 1,000,000."
+            )
+
         image_path, image_file = save_image(request.files.get("image"))
         pid = "P-" + uuid.uuid4().hex
+
         db = get_db()
-        # One transaction: an invalid product never leaves a new category behind.
+
+        # Product creation and activity logging use one transaction.
         with db:
             parent = category_id(db, category)
             child = subcategory_id(db, parent, subcategory)
-            db.execute("""INSERT INTO products
-                (id,name,category_id,subcategory_id,price_paise,stock,image_path)
-                VALUES (?,?,?,?,?,?,?)""",
-                (pid, name, parent, child, int(paise), int(raw_stock), image_path))
+
+            db.execute(
+                """INSERT INTO products
+                (id, name, category_id, subcategory_id,
+                 price_paise, stock, image_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    pid,
+                    name,
+                    parent,
+                    child,
+                    int(paise),
+                    int(raw_stock),
+                    image_path
+                )
+            )
+
+            # Task 6: Record successful product creation.
+            record_event(
+                db,
+                "PRODUCT_CREATED",
+                "product",
+                pid,
+                f"Product '{name}' was created."
+            )
+
     except (ValueError, sqlite3.Error, OSError) as error:
         if image_file:
             image_file.unlink(missing_ok=True)
+
         if not isinstance(error, ValueError):
             current_app.logger.exception("Product save failed")
-        flash(str(error) if isinstance(error, ValueError) else "Could not save the product. Please try again.", "error")
-        return render_template("admin_catalog.html", **dashboard_context(request.form.to_dict())), 400
-    flash(f"{name} was added. It is now available on the storefront.", "success")
+
+        flash(
+            str(error) if isinstance(error, ValueError)
+            else "Could not save the product. Please try again.",
+            "error"
+        )
+
+        return render_template(
+            "admin_catalog.html",
+            **dashboard_context(request.form.to_dict())
+        ), 400
+
+    flash(
+        f"{name} was added. It is now available on the storefront.",
+        "success"
+    )
+
     return redirect(url_for("admin.dashboard"))
 
 
 @admin.route("/products/<pid>/edit", methods=["GET", "POST"])
 @login_required
+
 def edit_product(pid):
     db = get_db()
 
@@ -293,6 +347,15 @@ def edit_product(pid):
                 pid,
             ))
 
+            # Task 6: Record successful product update.
+            record_event(
+                db,
+                "PRODUCT_UPDATED",
+                "product",
+                pid,
+                f"Product '{name}' was updated."
+            )
+
     except (ValueError, sqlite3.Error, OSError) as error:
         if image_file:
             image_file.unlink(missing_ok=True)
@@ -312,11 +375,16 @@ def edit_product(pid):
     return redirect(url_for("admin.dashboard"))
 
 
+
 @admin.post("/products/<pid>/delete")
 @login_required
+
 def delete_product(pid):
     db = get_db()
-    product = db.execute("SELECT id, name, image_path FROM products WHERE id = ?", (pid,)).fetchone()
+    product = db.execute(
+        "SELECT id, name, image_path FROM products WHERE id = ?",
+        (pid,)
+    ).fetchone()
 
     if product is None:
         flash("Product not found.", "error")
@@ -324,15 +392,97 @@ def delete_product(pid):
 
     try:
         with db:
-            db.execute("DELETE FROM products WHERE id = ?", (pid,))
+            db.execute(
+                "DELETE FROM products WHERE id = ?",
+                (pid,)
+            )
+
+            # Task 6: Record successful product deletion.
+            record_event(
+                db,
+                "PRODUCT_DELETED",
+                "product",
+                pid,
+                f"Product '{product['name']}' was deleted."
+            )
 
         if product["image_path"] and product["image_path"].startswith("uploads/products/"):
             image_file = Path(current_app.static_folder) / product["image_path"]
             image_file.unlink(missing_ok=True)
 
-        flash(f'"{product["name"]}" was deleted successfully.', "success")
+        flash(
+            f'"{product["name"]}" was deleted successfully.',
+            "success"
+        )
+
     except (sqlite3.Error, OSError) as error:
         current_app.logger.exception("Product deletion failed")
-        flash("Could not delete the product. Please try again.", "error")
+        flash(
+            "Could not delete the product. Please try again.",
+            "error"
+        )
 
     return redirect(url_for("admin.dashboard"))
+
+@admin.get("/activity")
+@login_required
+def activity_logs():
+    db = get_db()
+
+    # Read optional filters from the URL.
+    event_type = request.args.get("event_type", "").strip()
+    entity_type = request.args.get("entity_type", "").strip()
+
+    try:
+        page = max(1, int(request.args.get("page", "1")))
+    except ValueError:
+        page = 1
+
+    per_page = 20
+    offset = (page - 1) * per_page
+
+    # Build the query using parameterized filters.
+    conditions = []
+    params = []
+
+    if event_type:
+        conditions.append("event_type = ?")
+        params.append(event_type)
+
+    if entity_type:
+        conditions.append("entity_type = ?")
+        params.append(entity_type)
+
+    where_clause = (
+        " WHERE " + " AND ".join(conditions)
+        if conditions else ""
+    )
+
+    total = db.execute(
+        "SELECT COUNT(*) FROM activity_logs" + where_clause,
+        params
+    ).fetchone()[0]
+
+    logs = db.execute(
+        """
+        SELECT id, event_type, entity_type, entity_id,
+               details, created_at
+        FROM activity_logs
+        """
+        + where_clause +
+        " ORDER BY id DESC LIMIT ? OFFSET ?",
+        params + [per_page, offset]
+    ).fetchall()
+
+    total_pages = max(1, (total + per_page - 1) // per_page)
+
+    return render_template(
+        "admin_activity.html",
+        logs=logs,
+        event_type=event_type,
+        entity_type=entity_type,
+        page=page,
+        total_pages=total_pages,
+        total=total
+    )
+
