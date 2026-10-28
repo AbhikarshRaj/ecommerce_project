@@ -5,6 +5,7 @@ from datetime import timedelta
 from flask import Blueprint, current_app, jsonify, render_template, request, session
 from .bounded_stack import BoundedStack
 from .database import get_db
+from .activity import record_event
 
 cart = Blueprint('cart', __name__)
 MAX_DISTINCT = 100
@@ -134,69 +135,180 @@ def cart_state():
 
 
 @cart.post('/api/cart/action')
+
 def cart_action():
     owner = customer_id()
     db = get_db()
+
     try:
         db.execute('BEGIN IMMEDIATE')
+
         items, undo, redo, version = load(db, owner)
-        expected = integer(request.form.get('version', ''), 'Cart version', 2_000_000_000)
+
+        expected = integer(
+            request.form.get('version', ''),
+            'Cart version',
+            2_000_000_000
+        )
+
         if expected != version:
-            raise CartError('Your cart changed in another tab. It has been refreshed; try your action again.', 409)
+            raise CartError(
+                'Your cart changed in another tab. '
+                'It has been refreshed; try your action again.',
+                409
+            )
+
         action = request.form.get('action', '')
         label = ''
+
         if action in {'undo', 'redo'}:
-            source, destination = (undo, redo) if action == 'undo' else (redo, undo)
+            source, destination = (
+                (undo, redo) if action == 'undo' else (redo, undo)
+            )
+
             if not len(source):
                 raise CartError(f'Nothing to {action}.')
+
             entry = source.peek()
-            items = apply_changes(db, items, entry['changes'], 'before' if action == 'undo' else 'after')
+
+            items = apply_changes(
+                db,
+                items,
+                entry['changes'],
+                'before' if action == 'undo' else 'after'
+            )
+
             destination.push(source.pop())
-            label = f"{'Undid' if action == 'undo' else 'Redid'}: {entry['label']}"
+
+            label = (
+                f"{'Undid' if action == 'undo' else 'Redid'}: "
+                f"{entry['label']}"
+            )
+
         else:
             if action == 'clear':
-                changes = {pid: dict(before=q, after=0) for pid, q in items.items()}
+                changes = {
+                    pid: dict(before=q, after=0)
+                    for pid, q in items.items()
+                }
                 label = 'Cleared the cart'
-            elif action in {'add', 'increment', 'decrement', 'set', 'remove'}:
+
+            elif action in {
+                'add', 'increment', 'decrement', 'set', 'remove'
+            }:
                 pid = request.form.get('product_id', '')
+
                 if not pid or len(pid) > 100:
                     raise CartError('Choose a valid product.')
+
                 before = items.get(pid, 0)
+
                 if action in {'add', 'increment'}:
                     after = before + 1
+
                 elif action == 'decrement':
                     if not before:
-                        raise CartError('This item is no longer in your cart.')
+                        raise CartError(
+                            'This item is no longer in your cart.'
+                        )
                     after = before - 1
+
                 elif action == 'remove':
                     after = 0
+
                 else:
-                    after = integer(request.form.get('quantity', ''), 'Quantity')
+                    after = integer(
+                        request.form.get('quantity', ''),
+                        'Quantity'
+                    )
+
                 product = records(db, [pid]).get(pid)
                 name = product['name'] if product else pid
-                changes = {pid: dict(before=before, after=after)} if before != after else {}
+
+                changes = (
+                    {pid: dict(before=before, after=after)}
+                    if before != after
+                    else {}
+                )
+
                 label = f'{name}: {before} → {after}'
+
             else:
                 raise CartError('Unknown cart action.')
+
             if not changes:
                 data = snapshot(db, owner)
                 db.commit()
-                return jsonify(**data, message='No change needed.')
-            items = apply_changes(db, items, changes, 'after')
-            undo.push(dict(changes=changes, label=label))
-            redo = BoundedStack()  # A new edit discards the old redo branch.
-        db.execute('''INSERT INTO shopping_carts(customer_id,version,items_json,undo_json,redo_json)
-            VALUES (?,?,?,?,?) ON CONFLICT(customer_id) DO UPDATE SET
-            version=excluded.version, items_json=excluded.items_json,
-            undo_json=excluded.undo_json, redo_json=excluded.redo_json, updated_at=CURRENT_TIMESTAMP''',
-            (owner, version + 1, json.dumps(items), json.dumps(undo.items()), json.dumps(redo.items())))
+                return jsonify(
+                    **data,
+                    message='No change needed.'
+                )
+
+            items = apply_changes(
+                db,
+                items,
+                changes,
+                'after'
+            )
+
+            undo.push(
+                dict(changes=changes, label=label)
+            )
+
+            # A new edit discards the old redo branch.
+            redo = BoundedStack()
+
+        # Save the updated cart and undo/redo history.
+        db.execute(
+            '''INSERT INTO shopping_carts
+            (customer_id, version, items_json, undo_json, redo_json)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(customer_id) DO UPDATE SET
+                version=excluded.version,
+                items_json=excluded.items_json,
+                undo_json=excluded.undo_json,
+                redo_json=excluded.redo_json,
+                updated_at=CURRENT_TIMESTAMP''',
+            (
+                owner,
+                version + 1,
+                json.dumps(items),
+                json.dumps(undo.items()),
+                json.dumps(redo.items())
+            )
+        )
+
+        # Task 6: Record successful cart activity.
+        record_event(
+            db,
+            f"CART_{action.upper()}",
+            "cart",
+            owner,
+            label
+        )
+
         data = snapshot(db, owner)
+
+        # Commit the cart changes and activity log together.
         db.commit()
+
         return jsonify(**data, message=label)
+
     except CartError as error:
         db.rollback()
-        return jsonify(**snapshot(db, owner), error=str(error)), error.status
+
+        return jsonify(
+            **snapshot(db, owner),
+            error=str(error)
+        ), error.status
+
     except Exception:
         db.rollback()
-        current_app.logger.exception('Cart operation failed')
-        return jsonify(error='Could not save your cart. Please refresh before retrying.'), 500
+
+        current_app.logger.exception(
+            'Cart operation failed'
+        )
+
+        return jsonify(
+            error='Could not save your cart. Please refresh before retrying.'
+        ), 500

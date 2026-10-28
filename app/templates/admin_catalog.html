@@ -1,52 +1,151 @@
+
 {% extends 'admin_base.html' %}
 {% block content %}
-<div class="page-heading"><div><span class="eyebrow">YOUR STORE, ORGANIZED</span><h1>Product catalog</h1>
-<p class="muted">Add a product, organize its category, and make it available to shoppers.</p></div>
-<div class="stats"><strong>{{ products|length }}</strong> products · <strong>{{ categories|length }}</strong> categories</div></div>
+
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">YOUR STORE, ORGANIZED</span>
+    <h1>Product catalog</h1>
+    <p class="muted">Add a product, organize its category, and make it available to shoppers.</p>
+
+    <!-- Task 6: Direct navigation to operational activity logs -->
+    <div style="margin-top: 16px;">
+      <a href="{{ url_for('admin.activity_logs') }}"
+         class="button secondary"
+         style="display: inline-block; padding: 12px 20px; text-decoration: none;">
+        View Activity Logs
+      </a>
+    </div>
+  </div>
+
+  <div class="stats">
+    <strong>{{ products|length }}</strong> products ·
+    <strong>{{ categories|length }}</strong> categories
+  </div>
+</div>
+
 <div class="admin-layout">
-<section class="panel">
-  <h2>Add a product</h2><p class="muted">Select a suggested category or type a new name. Matching names are reused.</p>
-  <form method="post" action="{{ url_for('admin.add_product') }}" enctype="multipart/form-data" id="product-form">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="name">Product name <span aria-hidden="true">*</span></label>
-    <input id="name" name="name" maxlength="120" required value="{{ values.get('name','') }}" placeholder="e.g. Wireless Mouse">
-    <div class="two-columns taxonomy-fields">
-      <div><label for="category">Category *</label>
-      <input id="category" name="category" list="category-options" maxlength="80" required value="{{ values.get('category','') }}" placeholder="Choose or create" autocomplete="off"></div>
-      <div><label for="subcategory">Subcategory <span class="optional">optional</span></label>
-      <input id="subcategory" name="subcategory" list="product-subcategories" maxlength="80" value="{{ values.get('subcategory','') }}" placeholder="e.g. Computer Accessories" autocomplete="off">
-      <datalist id="product-subcategories"></datalist></div>
-    </div>
-    <div class="two-columns">
-      <div><label for="price">Price (₹) *</label><input id="price" name="price" type="number" min="0" max="10000000" step="0.01" required value="{{ values.get('price','') }}" placeholder="799.00"></div>
-      <div><label for="stock">Stock quantity *</label><input id="stock" name="stock" type="number" min="0" max="1000000" step="1" required value="{{ values.get('stock','') }}" placeholder="20"></div>
-    </div>
-    <label for="image">Product image *</label>
-    <div class="upload-box"><input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" required aria-describedby="image-help">
-    <p id="image-help" class="muted">JPEG, PNG or WebP · up to 5 MB · maximum 20 megapixels</p>
-    <img id="image-preview" alt="Selected product image preview" hidden></div>
-    <p class="muted">Stock 0 displays “Out of stock”. After a validation error, select the image again.</p>
-    <button type="submit">Save product</button>
-  </form>
-</section>
-<aside class="panel taxonomy-panel">
-  <h2>Organize categories</h2><p class="muted">Create a category or subcategory before adding products.</p>
-  <form method="post" action="{{ url_for('admin.add_taxonomy') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="taxonomy-fields">
-    <label for="new-category">Category *</label><input id="new-category" name="category" list="category-options" maxlength="80" required placeholder="e.g. Electronics" autocomplete="off">
-    <label for="new-subcategory">Subcategory <span class="optional">optional</span></label><input id="new-subcategory" name="subcategory" list="new-subcategories" maxlength="80" placeholder="e.g. Headphones" autocomplete="off"><datalist id="new-subcategories"></datalist>
-    </div><button class="secondary" type="submit">Save category / subcategory</button>
-  </form>
-  <h3>Current categories</h3>
-  <ul class="taxonomy-tree">{% for category in categories %}<li><strong>{{ category.name }}</strong>
-    <ul>{% for sub in subcategories if sub.category_id == category.id %}<li>{{ sub.name }}</li>{% endfor %}</ul>
-  </li>{% else %}<li>No categories yet.</li>{% endfor %}</ul>
-</aside>
+  <section class="panel">
+    <h2>Add a product</h2>
+    <p class="muted">Select a suggested category or type a new name. Matching names are reused.</p>
+
+    <form method="post" action="{{ url_for('admin.add_product') }}" enctype="multipart/form-data" id="product-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label for="name">Product name <span aria-hidden="true">*</span></label>
+      <input id="name" name="name" maxlength="120" required
+             value="{{ values.get('name','') }}"
+             placeholder="e.g. Wireless Mouse">
+
+      <div class="two-columns taxonomy-fields">
+        <div>
+          <label for="category">Category *</label>
+          <input id="category" name="category" list="category-options"
+                 maxlength="80" required
+                 value="{{ values.get('category','') }}"
+                 placeholder="Choose or create" autocomplete="off">
+        </div>
+
+        <div>
+          <label for="subcategory">
+            Subcategory <span class="optional">optional</span>
+          </label>
+          <input id="subcategory" name="subcategory"
+                 list="product-subcategories" maxlength="80"
+                 value="{{ values.get('subcategory','') }}"
+                 placeholder="e.g. Computer Accessories" autocomplete="off">
+          <datalist id="product-subcategories"></datalist>
+        </div>
+      </div>
+
+      <div class="two-columns">
+        <div>
+          <label for="price">Price (₹) *</label>
+          <input id="price" name="price" type="number"
+                 min="0" max="10000000" step="0.01" required
+                 value="{{ values.get('price','') }}"
+                 placeholder="799.00">
+        </div>
+
+        <div>
+          <label for="stock">Stock quantity *</label>
+          <input id="stock" name="stock" type="number"
+                 min="0" max="1000000" step="1" required
+                 value="{{ values.get('stock','') }}"
+                 placeholder="20">
+        </div>
+      </div>
+
+      <label for="image">Product image *</label>
+      <div class="upload-box">
+        <input id="image" name="image" type="file"
+               accept="image/jpeg,image/png,image/webp"
+               required aria-describedby="image-help">
+        <p id="image-help" class="muted">
+          JPEG, PNG or WebP · up to 5 MB · maximum 20 megapixels
+        </p>
+        <img id="image-preview" alt="Selected product image preview" hidden>
+      </div>
+
+      <p class="muted">
+        Stock 0 displays “Out of stock”.
+        After a validation error, select the image again.
+      </p>
+
+      <button type="submit">Save product</button>
+    </form>
+  </section>
+
+  <aside class="panel taxonomy-panel">
+    <h2>Organize categories</h2>
+    <p class="muted">
+      Create a category or subcategory before adding products.
+    </p>
+
+    <form method="post" action="{{ url_for('admin.add_taxonomy') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="taxonomy-fields">
+        <label for="new-category">Category *</label>
+        <input id="new-category" name="category"
+               list="category-options" maxlength="80" required
+               placeholder="e.g. Electronics" autocomplete="off">
+
+        <label for="new-subcategory">
+          Subcategory <span class="optional">optional</span>
+        </label>
+        <input id="new-subcategory" name="subcategory"
+               list="new-subcategories" maxlength="80"
+               placeholder="e.g. Headphones" autocomplete="off">
+        <datalist id="new-subcategories"></datalist>
+      </div>
+
+      <button class="secondary" type="submit">
+        Save category / subcategory
+      </button>
+    </form>
+
+    <h3>Current categories</h3>
+    <ul class="taxonomy-tree">
+      {% for category in categories %}
+      <li>
+        <strong>{{ category.name }}</strong>
+        <ul>
+          {% for sub in subcategories if sub.category_id == category.id %}
+          <li>{{ sub.name }}</li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% else %}
+      <li>No categories yet.</li>
+      {% endfor %}
+    </ul>
+  </aside>
 </div>
 
 <section class="panel inventory">
   <h2>Saved products</h2>
+
   <div class="table-scroll">
     <table>
       <thead>
@@ -59,13 +158,16 @@
           <th scope="col">Action</th>
         </tr>
       </thead>
+
       <tbody>
         {% for id, p in products.items() %}
         <tr>
           <td>{{ p.name }}</td>
           <td>{{ p.category }}</td>
           <td>{{ p.subcategory or '—' }}</td>
-          <td>₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td>
+          <td>
+            ₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}
+          </td>
           <td>{{ p.stock }}</td>
           <td>
             <a class="button secondary"
@@ -84,6 +186,14 @@
   </div>
 </section>
 
-<datalist id="category-options">{% for c in categories %}<option value="{{ c.name }}"></option>{% endfor %}</datalist>
-<script type="application/json" id="admin-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
+<datalist id="category-options">
+  {% for c in categories %}
+  <option value="{{ c.name }}"></option>
+  {% endfor %}
+</datalist>
+
+<script type="application/json" id="admin-taxonomy-data">
+  {{ {'categories':categories,'subcategories':subcategories}|tojson }}
+</script>
+
 {% endblock %}
