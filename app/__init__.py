@@ -3,6 +3,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, jsonify, session, abort
 from .database import get_db, close_db, initialize, clean_name
 from .catalog_store import CatalogStore
+from .activity import cleanup_old_logs
 
 
 def create_app(test_config=None):
@@ -28,8 +29,19 @@ def create_app(test_config=None):
             pass
         app.config["SECRET_KEY"] = secret_file.read_text(encoding="utf-8").strip()
     app.teardown_appcontext(close_db)
+
     with app.app_context():
         initialize()
+
+        db = get_db()
+        with db:
+            deleted_count = cleanup_old_logs(db, retention_days=90)
+
+        app.logger.info(
+            "Activity log cleanup completed. Deleted %d old records.",
+            deleted_count
+        )
+
     app.extensions["catalog_store"] = CatalogStore()
 
     def csrf_token():
