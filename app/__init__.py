@@ -76,9 +76,15 @@ def create_app(test_config=None):
     def too_large(_error):
         return "Upload too large. Go back and select an image under 5 MB.", 413
 
+    # Existing modules preserved as specified in project completion plan
     from .admin import admin, register_commands
     app.register_blueprint(admin)
     register_commands(app)
     from .cart import init_cart
     init_cart(app)
+
+    # Feature blueprints registration
+    from .features import register_features
+    register_features(app)
+
     return app

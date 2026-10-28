@@ -22,11 +22,13 @@ CREATE TABLE IF NOT EXISTS products (
     price_paise INTEGER NOT NULL CHECK(price_paise >= 0),
     stock INTEGER NOT NULL CHECK(stock >= 0),
     image_path TEXT NOT NULL,
+    is_active INTEGER NOT NULL DEFAULT 1 CHECK(is_active IN (0, 1)),
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(subcategory_id, category_id) REFERENCES subcategories(id, category_id)
 );
 CREATE INDEX IF NOT EXISTS products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS products_subcategory ON products(subcategory_id);
+CREATE INDEX IF NOT EXISTS products_active ON products(is_active);
 CREATE TABLE IF NOT EXISTS catalog_meta (
     id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL
 );
@@ -84,6 +86,16 @@ def subcategory_id(db, parent_id, name):
 def initialize():
     db = get_db()
     db.executescript(SCHEMA)
+
+    # Schema migration: ensure is_active column exists for existing databases
+    cursor = db.execute("PRAGMA table_info(products)")
+    existing_cols = [row["name"] for row in cursor.fetchall()]
+    if "is_active" not in existing_cols:
+        with db:
+            db.execute("ALTER TABLE products ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1 CHECK(is_active IN (0, 1))")
+            db.execute("CREATE INDEX IF NOT EXISTS products_active ON products(is_active)")
+            db.execute("UPDATE catalog_meta SET revision=revision+1 WHERE id=1")
+
     # The installer extracts the original literal dictionary into this seed file.
     # Import it exactly once; never recreate deleted products on restart.
     if not db.execute("SELECT 1 FROM settings WHERE key='seed_imported'").fetchone():
@@ -92,8 +104,12 @@ def initialize():
         with db:
             for pid, product in products.items():
                 parent = category_id(db, product["category"])
+                child = subcategory_id(db, parent, product.get("subcategory", ""))
+                is_active = int(product.get("is_active", 1))
+                img_path = product.get("image_path", f"images/products/{pid}.jpg")
                 db.execute("""INSERT OR IGNORE INTO products
-                    (id,name,category_id,price_paise,stock,image_path) VALUES (?,?,?,?,?,?)""",
-                    (pid, product["name"], parent, product["price_paise"], product["stock"],
-                     f"images/products/{pid}.jpg"))
+                    (id,name,category_id,subcategory_id,price_paise,stock,image_path,is_active)
+                    VALUES (?,?,?,?,?,?,?,?)""",
+                    (pid, product["name"], parent, child, product["price_paise"],
+                     product["stock"], img_path, is_active))
             db.execute("INSERT INTO settings VALUES ('seed_imported','yes')")

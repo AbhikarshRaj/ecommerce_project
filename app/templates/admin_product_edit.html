@@ -1,0 +1,128 @@
+{% extends 'admin_base.html' %}
+{% block title %}Edit {{ product.name }}{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <div class="breadcrumbs"><a href="{{ url_for('admin.dashboard') }}">← Back to catalog</a></div>
+    <span class="eyebrow">INVENTORY MANAGEMENT</span>
+    <h1>Edit product</h1>
+    <p class="muted">Modify product information, restock inventory, update images, or manage activation status.</p>
+  </div>
+  <div class="product-id-badge">
+    <small class="muted">PRODUCT ID</small>
+    <code>{{ product.id }}</code>
+  </div>
+</div>
+
+<div class="admin-layout edit-layout">
+  <section class="panel edit-panel">
+    <h2>Product details</h2>
+    <form method="post" action="{{ url_for('admin.edit_product', product_id=product.id) }}" enctype="multipart/form-data" id="edit-product-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label for="name">Product name <span aria-hidden="true">*</span></label>
+      <input id="name" name="name" maxlength="120" required value="{{ product.name }}" placeholder="e.g. Wireless Mouse">
+
+      <div class="two-columns taxonomy-fields">
+        <div>
+          <label for="category">Category *</label>
+          <input id="category" name="category" list="category-options" maxlength="80" required value="{{ product.category }}" placeholder="Choose or create" autocomplete="off">
+        </div>
+        <div>
+          <label for="subcategory">Subcategory <span class="optional">optional</span></label>
+          <input id="subcategory" name="subcategory" list="product-subcategories" maxlength="80" value="{{ product.subcategory }}" placeholder="e.g. Computer Accessories" autocomplete="off">
+          <datalist id="product-subcategories"></datalist>
+        </div>
+      </div>
+
+      <div class="two-columns">
+        <div>
+          <label for="price">Price (₹) *</label>
+          <input id="price" name="price" type="number" min="0" max="10000000" step="0.01" required value="{{ '%.2f'|format(product.price_paise / 100) }}" placeholder="799.00">
+        </div>
+        <div>
+          <label for="stock">Stock quantity (Restock) *</label>
+          <input id="stock" name="stock" type="number" min="0" max="1000000" step="1" required value="{{ product.stock }}" placeholder="20">
+          <p class="field-hint muted">Change this value to restock or adjust live inventory.</p>
+        </div>
+      </div>
+
+      <div class="status-selection-group">
+        <label>Catalog visibility &amp; purchase status *</label>
+        <div class="status-options">
+          <label class="radio-card">
+            <input type="radio" name="is_active" value="1" {% if product.is_active %}checked{% endif %}>
+            <div class="radio-content">
+              <strong>Active</strong>
+              <span class="muted">Visible on storefront, included in search results, and purchasable.</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="is_active" value="0" {% if not product.is_active %}checked{% endif %}>
+            <div class="radio-content">
+              <strong>Inactive (Deactivated)</strong>
+              <span class="muted">Hidden from customer catalog/search. New purchases and cart additions are blocked.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="image-management-section">
+        <label>Product image</label>
+        <div class="image-columns">
+          <div class="current-image-box">
+            <p class="muted current-img-label">Current image:</p>
+            <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="product-thumb-large" onerror="this.style.display='none'">
+            <p class="muted filename-text"><code>{{ product.image_path }}</code></p>
+          </div>
+          <div class="replacement-image-box">
+            <label for="image" class="sub-label">Replace with new image <span class="optional">(optional)</span></label>
+            <div class="upload-box">
+              <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="image-help">
+              <p id="image-help" class="muted">JPEG, PNG or WebP · up to 5 MB. Leave blank to keep current image.</p>
+              <img id="image-preview" alt="New replacement image preview" hidden>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary-button">Save changes</button>
+        <a href="{{ url_for('admin.dashboard') }}" class="button secondary">Cancel</a>
+      </div>
+    </form>
+  </section>
+
+  <aside class="panel side-info-panel">
+    <h3>Quick actions</h3>
+    <p class="muted">Toggle catalog status without full form submission:</p>
+    <form method="post" action="{{ url_for('admin.toggle_status', product_id=product.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if product.is_active %}
+        <button type="submit" class="warning-button full-width">Deactivate product</button>
+      {% else %}
+        <button type="submit" class="success-button full-width">Activate product</button>
+      {% endif %}
+    </form>
+
+    <hr class="panel-divider">
+
+    <h3>Quick restock</h3>
+    <p class="muted">Quickly set stock to a specific number:</p>
+    <form method="post" action="{{ url_for('admin.restock_product', product_id=product.id) }}" class="quick-restock-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="quick-restock-row">
+        <input name="stock" type="number" min="0" max="1000000" step="1" required value="{{ product.stock }}">
+        <button type="submit" class="secondary">Update stock</button>
+      </div>
+    </form>
+  </aside>
+</div>
+
+<datalist id="category-options">
+  {% for c in categories %}
+  <option value="{{ c.name }}"></option>
+  {% endfor %}
+</datalist>
+<script type="application/json" id="admin-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
+{% endblock %}

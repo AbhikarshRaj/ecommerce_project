@@ -1,0 +1,82 @@
+{% extends 'admin_base.html' %}
+{% block title %}Inventory management{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/inventory.css') }}">
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">FEATURE: INVENTORY</span>
+    <h1>Inventory management</h1>
+    <p class="muted">Manage stock levels, restock items, edit catalog information, and toggle active status.</p>
+  </div>
+  <div class="stats">
+    <a href="{{ url_for('admin.dashboard') }}" class="button secondary">← Admin catalog</a>
+  </div>
+</div>
+
+<section class="panel inventory">
+  <div class="table-scroll">
+    <table id="inventory-table">
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Category</th>
+          <th scope="col">Subcategory</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, p in products.items() %}
+        <tr class="product-row">
+          <td class="product-info-cell">
+            <div class="product-cell-flex">
+              <img src="{{ url_for('static', filename=p.image_path) }}" alt="" class="table-thumbnail" onerror="this.style.display='none'">
+              <div>
+                <strong>{{ p.name }}</strong>
+                <span class="product-row-id"><code>{{ id }}</code></span>
+              </div>
+            </div>
+          </td>
+          <td>{{ p.category }}</td>
+          <td>{{ p.subcategory or '—' }}</td>
+          <td class="price-cell">₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td>
+          <td>
+            {% if p.stock == 0 %}
+              <span class="badge out-of-stock">0 (Out of stock)</span>
+            {% elif p.stock <= 5 %}
+              <span class="badge low-stock">{{ p.stock }} (Low stock)</span>
+            {% else %}
+              <span class="badge in-stock">{{ p.stock }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.is_active %}
+              <span class="badge status-active">Active</span>
+            {% else %}
+              <span class="badge status-inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons-wrap">
+              <a href="{{ url_for('inventory.edit_product', product_id=id) }}" class="action-btn edit-btn">Edit</a>
+              <form method="post" action="{{ url_for('inventory.toggle_status', product_id=id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if p.is_active %}
+                  <button type="submit" class="action-btn deactivate-btn">Deactivate</button>
+                {% else %}
+                  <button type="submit" class="action-btn activate-btn">Activate</button>
+                {% endif %}
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

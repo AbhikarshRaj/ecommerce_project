@@ -81,6 +81,29 @@ def validated_name(field, required=True, maximum=80):
     return value
 
 
+def parse_price_paise(raw_price):
+    raw_price = (raw_price or "").strip()
+    if len(raw_price) > 20:
+        raise ValueError("Enter a valid price.")
+    try:
+        price = Decimal(raw_price)
+        if not price.is_finite() or price < 0 or price > 10_000_000:
+            raise ValueError("Price must be between ₹0 and ₹1,00,00,000.")
+        paise = price * 100
+        if paise != paise.to_integral_value():
+            raise ValueError("Price can have at most two decimal places.")
+        return int(paise)
+    except InvalidOperation:
+        raise ValueError("Enter a valid price, such as 799.50.") from None
+
+
+def parse_stock(raw_stock):
+    raw_stock = (raw_stock or "").strip()
+    if not raw_stock.isascii() or not raw_stock.isdigit() or len(raw_stock) > 7 or int(raw_stock) > 1_000_000:
+        raise ValueError("Stock must be a whole number between 0 and 1,000,000.")
+    return int(raw_stock)
+
+
 def save_image(upload):
     if not upload or not upload.filename:
         raise ValueError("Choose a product image.")
@@ -115,12 +138,21 @@ def save_image(upload):
     return f"uploads/products/{filename}", path
 
 
-def dashboard_context(values=None):
+def get_taxonomy():
     db = get_db()
+    categories = [dict(r) for r in db.execute("SELECT * FROM categories ORDER BY name COLLATE NOCASE")]
+    subcategories = [dict(r) for r in db.execute("SELECT * FROM subcategories ORDER BY name COLLATE NOCASE")]
+    return categories, subcategories
+
+
+def dashboard_context(values=None):
+    categories, subcategories = get_taxonomy()
+    # Admin dashboard displays all products (both active and inactive)
+    products = current_app.extensions["catalog_store"].select(active_only=False)
     return dict(
-        categories=[dict(r) for r in db.execute("SELECT * FROM categories ORDER BY name COLLATE NOCASE")],
-        subcategories=[dict(r) for r in db.execute("SELECT * FROM subcategories ORDER BY name COLLATE NOCASE")],
-        products=current_app.extensions["catalog_store"].select(),
+        categories=categories,
+        subcategories=subcategories,
+        products=products,
         values=values or {},
     )
 
@@ -157,32 +189,19 @@ def add_product():
         name = validated_name("name", maximum=120)
         category = validated_name("category")
         subcategory = validated_name("subcategory", required=False)
-        raw_price = request.form.get("price", "").strip()
-        if len(raw_price) > 20:
-            raise ValueError("Enter a valid price.")
-        try:
-            price = Decimal(raw_price)
-            if not price.is_finite() or price < 0 or price > 10_000_000:
-                raise ValueError("Price must be between ₹0 and ₹1,00,00,000.")
-            paise = price * 100
-            if paise != paise.to_integral_value():
-                raise ValueError("Price can have at most two decimal places.")
-        except InvalidOperation:
-            raise ValueError("Enter a valid price, such as 799.50.") from None
-        raw_stock = request.form.get("stock", "").strip()
-        if not raw_stock.isascii() or not raw_stock.isdigit() or len(raw_stock) > 7 or int(raw_stock) > 1_000_000:
-            raise ValueError("Stock must be a whole number between 0 and 1,000,000.")
+        paise = parse_price_paise(request.form.get("price"))
+        stock = parse_stock(request.form.get("stock"))
+        is_active = 1 if request.form.get("is_active", "1") in {"1", "true", "on"} else 0
         image_path, image_file = save_image(request.files.get("image"))
         pid = "P-" + uuid.uuid4().hex
         db = get_db()
-        # One transaction: an invalid product never leaves a new category behind.
         with db:
             parent = category_id(db, category)
             child = subcategory_id(db, parent, subcategory)
             db.execute("""INSERT INTO products
-                (id,name,category_id,subcategory_id,price_paise,stock,image_path)
-                VALUES (?,?,?,?,?,?,?)""",
-                (pid, name, parent, child, int(paise), int(raw_stock), image_path))
+                (id,name,category_id,subcategory_id,price_paise,stock,image_path,is_active)
+                VALUES (?,?,?,?,?,?,?,?)""",
+                (pid, name, parent, child, paise, stock, image_path, is_active))
     except (ValueError, sqlite3.Error, OSError) as error:
         if image_file:
             image_file.unlink(missing_ok=True)
@@ -191,4 +210,148 @@ def add_product():
         flash(str(error) if isinstance(error, ValueError) else "Could not save the product. Please try again.", "error")
         return render_template("admin_catalog.html", **dashboard_context(request.form.to_dict())), 400
     flash(f"{name} was added. It is now available on the storefront.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+def fetch_product_details(product_id):
+    db = get_db()
+    row = db.execute("""SELECT p.*, c.name AS category,
+        COALESCE(s.name, '') AS subcategory
+        FROM products p
+        JOIN categories c ON c.id=p.category_id
+        LEFT JOIN subcategories s ON s.id=p.subcategory_id
+        WHERE p.id=?""", (product_id,)).fetchone()
+    return dict(row) if row else None
+
+
+@admin.route("/products/<product_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_product(product_id):
+    product = fetch_product_details(product_id)
+    if not product:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    categories, subcategories = get_taxonomy()
+
+    if request.method == "POST":
+        new_image_file = None
+        try:
+            name = validated_name("name", maximum=120)
+            category = validated_name("category")
+            subcategory = validated_name("subcategory", required=False)
+            paise = parse_price_paise(request.form.get("price"))
+            stock = parse_stock(request.form.get("stock"))
+            is_active = 1 if request.form.get("is_active") in {"1", "true", "on"} else 0
+
+            # Optional replacement image: retain existing image if none uploaded
+            upload = request.files.get("image")
+            if upload and upload.filename:
+                image_path, new_image_file = save_image(upload)
+            else:
+                image_path = product["image_path"]
+
+            db = get_db()
+            with db:
+                parent = category_id(db, category)
+                child = subcategory_id(db, parent, subcategory)
+                db.execute("""UPDATE products SET
+                    name=?, category_id=?, subcategory_id=?, price_paise=?,
+                    stock=?, image_path=?, is_active=?
+                    WHERE id=?""",
+                    (name, parent, child, paise, stock, image_path, is_active, product_id))
+
+            flash(f"'{name}' was updated successfully.", "success")
+            return redirect(url_for("admin.dashboard"))
+        except (ValueError, sqlite3.Error, OSError) as error:
+            if new_image_file:
+                new_image_file.unlink(missing_ok=True)
+            if not isinstance(error, ValueError):
+                current_app.logger.exception("Product update failed")
+            flash(str(error) if isinstance(error, ValueError) else "Could not update the product. Please try again.", "error")
+            # Populate form with submitted values for user correction
+            product_values = dict(product)
+            product_values.update(request.form.to_dict())
+            if "price" in request.form:
+                try:
+                    product_values["price_paise"] = parse_price_paise(request.form["price"])
+                except Exception:
+                    pass
+            if "stock" in request.form:
+                try:
+                    product_values["stock"] = int(request.form["stock"])
+                except Exception:
+                    pass
+            product_values["is_active"] = 1 if request.form.get("is_active") in {"1", "true", "on"} else 0
+            return render_template("admin_product_edit.html",
+                                   product=product_values,
+                                   categories=categories,
+                                   subcategories=subcategories), 400
+
+    # GET request
+    return render_template("admin_product_edit.html",
+                           product=product,
+                           categories=categories,
+                           subcategories=subcategories)
+
+
+@admin.post("/products/<product_id>/activate")
+@login_required
+def activate_product(product_id):
+    db = get_db()
+    product = db.execute("SELECT id, name FROM products WHERE id=?", (product_id,)).fetchone()
+    if not product:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+    with db:
+        db.execute("UPDATE products SET is_active=1 WHERE id=?", (product_id,))
+    flash(f"'{product['name']}' has been activated and is now visible on the storefront.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+@admin.post("/products/<product_id>/deactivate")
+@login_required
+def deactivate_product(product_id):
+    db = get_db()
+    product = db.execute("SELECT id, name FROM products WHERE id=?", (product_id,)).fetchone()
+    if not product:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+    with db:
+        db.execute("UPDATE products SET is_active=0 WHERE id=?", (product_id,))
+    flash(f"'{product['name']}' has been deactivated and hidden from customers.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+@admin.post("/products/<product_id>/toggle-status")
+@login_required
+def toggle_status(product_id):
+    db = get_db()
+    product = db.execute("SELECT id, name, is_active FROM products WHERE id=?", (product_id,)).fetchone()
+    if not product:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+    new_status = 0 if product["is_active"] else 1
+    with db:
+        db.execute("UPDATE products SET is_active=? WHERE id=?", (new_status, product_id))
+    action_text = "activated and is now visible on storefront" if new_status else "deactivated and hidden from customers"
+    flash(f"'{product['name']}' was {action_text}.", "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+@admin.post("/products/<product_id>/restock")
+@login_required
+def restock_product(product_id):
+    db = get_db()
+    product = db.execute("SELECT id, name, stock FROM products WHERE id=?", (product_id,)).fetchone()
+    if not product:
+        flash("Product not found.", "error")
+        return redirect(url_for("admin.dashboard"))
+    try:
+        new_stock = parse_stock(request.form.get("stock"))
+        with db:
+            db.execute("UPDATE products SET stock=? WHERE id=?", (new_stock, product_id))
+        flash(f"Stock for '{product['name']}' updated to {new_stock}.", "success")
+    except ValueError as e:
+        flash(str(e), "error")
     return redirect(url_for("admin.dashboard"))

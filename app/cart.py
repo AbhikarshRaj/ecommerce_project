@@ -63,12 +63,14 @@ def snapshot(db, owner):
     lines, total = [], 0
     for pid, quantity in items.items():
         product = products.get(pid)
-        unavailable = product is None
-        stock = product['stock'] if product else 0
+        is_active = bool(product.get('is_active', 1)) if product else False
+        unavailable = (product is None) or not is_active
+        stock = product['stock'] if (product and is_active) else 0
         price = product['price_paise'] if product else 0
         line_total = price * quantity
         total += line_total
-        lines.append(dict(id=pid, name=product['name'] if product else 'Product no longer available',
+        lines.append(dict(id=pid,
+                          name=(product['name'] + ' (Unavailable)') if (product and not is_active) else (product['name'] if product else 'Product no longer available'),
                           image_path=product['image_path'] if product else '', quantity=quantity,
                           price_paise=price, line_total_paise=line_total, stock=stock,
                           unavailable=unavailable, exceeds_stock=quantity > stock))
@@ -104,7 +106,7 @@ def apply_changes(db, items, changes, side):
             if quantity > MAX_QUANTITY:
                 raise CartError(f'A cart item can contain at most {MAX_QUANTITY} units.')
             product = products.get(pid)
-            if not product:
+            if not product or not product.get('is_active', 1):
                 raise CartError('This product is no longer available. Remove it from your cart.', 404)
             if quantity > product['stock']:
                 raise CartError(f"Only {product['stock']} units of {product['name']} are available.", 409)

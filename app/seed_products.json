@@ -1,38 +1,452 @@
 {
   "P101": {
-    "name": "Wireless Mouse",
+    "name": "Wireless Ergonomic Mouse",
     "category": "Electronics",
-    "price_paise": 79900,
-    "stock": 20
+    "subcategory": "Computer Accessories",
+    "price_paise": 129900,
+    "stock": 24,
+    "is_active": 1,
+    "image_path": "images/products/P101.jpg"
   },
   "P102": {
-    "name": "Mechanical Keyboard",
+    "name": "Mechanical Gaming Keyboard",
     "category": "Electronics",
-    "price_paise": 249900,
-    "stock": 12
+    "subcategory": "Computer Accessories",
+    "price_paise": 299900,
+    "stock": 12,
+    "is_active": 1,
+    "image_path": "images/products/P102.jpg"
   },
   "P103": {
-    "name": "Classic Cotton T-Shirt",
-    "category": "Clothing",
-    "price_paise": 59900,
-    "stock": 18
+    "name": "Ultra HD 4K Pro Webcam",
+    "category": "Electronics",
+    "subcategory": "Computer Accessories",
+    "price_paise": 349900,
+    "stock": 3,
+    "is_active": 1,
+    "image_path": "images/products/P103.jpg"
   },
   "P104": {
-    "name": "Everyday Sneakers",
-    "category": "Footwear",
-    "price_paise": 179900,
-    "stock": 4
+    "name": "Noise-Cancelling Headphones",
+    "category": "Electronics",
+    "subcategory": "Audio & Headphones",
+    "price_paise": 449900,
+    "stock": 18,
+    "is_active": 1,
+    "image_path": "images/products/P104.jpg"
   },
   "P105": {
-    "name": "Everyday Backpack",
-    "category": "Accessories",
-    "price_paise": 149900,
-    "stock": 10
+    "name": "True Wireless Earbuds",
+    "category": "Electronics",
+    "subcategory": "Audio & Headphones",
+    "price_paise": 189900,
+    "stock": 0,
+    "is_active": 1,
+    "image_path": "images/products/P105.jpg"
   },
   "P106": {
-    "name": "Hardcover Notebook",
-    "category": "Stationery",
-    "price_paise": 19900,
-    "stock": 30
+    "name": "Portable Bluetooth Speaker",
+    "category": "Electronics",
+    "subcategory": "Audio & Headphones",
+    "price_paise": 219900,
+    "stock": 8,
+    "is_active": 1,
+    "image_path": "images/products/P106.jpg"
+  },
+  "P107": {
+    "name": "65W GaN Fast Charger",
+    "category": "Electronics",
+    "subcategory": "Mobile Accessories",
+    "price_paise": 119900,
+    "stock": 30,
+    "is_active": 1,
+    "image_path": "images/products/P107.jpg"
+  },
+  "P108": {
+    "name": "Braided USB-C Fast Cable",
+    "category": "Electronics",
+    "subcategory": "Mobile Accessories",
+    "price_paise": 49900,
+    "stock": 5,
+    "is_active": 1,
+    "image_path": "images/products/P108.jpg"
+  },
+  "P109": {
+    "name": "AMOLED Fitness Smartwatch",
+    "category": "Electronics",
+    "subcategory": "Smart Wearables",
+    "price_paise": 329900,
+    "stock": 15,
+    "is_active": 1,
+    "image_path": "images/products/P109.jpg"
+  },
+  "P110": {
+    "name": "Magnetic 10000mAh Power Bank",
+    "category": "Electronics",
+    "subcategory": "Mobile Accessories",
+    "price_paise": 169900,
+    "stock": 0,
+    "is_active": 0,
+    "image_path": "images/products/P110.jpg"
+  },
+  "P111": {
+    "name": "Classic Crewneck Cotton Tee",
+    "category": "Clothing",
+    "subcategory": "Men's Apparel",
+    "price_paise": 69900,
+    "stock": 40,
+    "is_active": 1,
+    "image_path": "images/products/P111.jpg"
+  },
+  "P112": {
+    "name": "Slim Fit Stretch Denim Jeans",
+    "category": "Clothing",
+    "subcategory": "Men's Apparel",
+    "price_paise": 179900,
+    "stock": 18,
+    "is_active": 1,
+    "image_path": "images/products/P112.jpg"
+  },
+  "P113": {
+    "name": "Linen Casual Button-Down Shirt",
+    "category": "Clothing",
+    "subcategory": "Men's Apparel",
+    "price_paise": 149900,
+    "stock": 2,
+    "is_active": 1,
+    "image_path": "images/products/P113.jpg"
+  },
+  "P114": {
+    "name": "Floral Wrap Summer Blouse",
+    "category": "Clothing",
+    "subcategory": "Women's Apparel",
+    "price_paise": 99900,
+    "stock": 20,
+    "is_active": 1,
+    "image_path": "images/products/P114.jpg"
+  },
+  "P115": {
+    "name": "High-Waist Tailored Trousers",
+    "category": "Clothing",
+    "subcategory": "Women's Apparel",
+    "price_paise": 159900,
+    "stock": 11,
+    "is_active": 1,
+    "image_path": "images/products/P115.jpg"
+  },
+  "P116": {
+    "name": "Cozy Oversized Fleece Hoodie",
+    "category": "Clothing",
+    "subcategory": "Casual Wear",
+    "price_paise": 189900,
+    "stock": 0,
+    "is_active": 1,
+    "image_path": "images/products/P116.jpg"
+  },
+  "P117": {
+    "name": "All-Weather Windbreaker Jacket",
+    "category": "Clothing",
+    "subcategory": "Outerwear",
+    "price_paise": 249900,
+    "stock": 9,
+    "is_active": 1,
+    "image_path": "images/products/P117.jpg"
+  },
+  "P118": {
+    "name": "French Terry Sports Joggers",
+    "category": "Clothing",
+    "subcategory": "Casual Wear",
+    "price_paise": 119900,
+    "stock": 4,
+    "is_active": 1,
+    "image_path": "images/products/P118.jpg"
+  },
+  "P119": {
+    "name": "Merino Wool Blend Sweater",
+    "category": "Clothing",
+    "subcategory": "Outerwear",
+    "price_paise": 229900,
+    "stock": 14,
+    "is_active": 1,
+    "image_path": "images/products/P119.jpg"
+  },
+  "P120": {
+    "name": "Vintage Acid-Wash Graphic Tee",
+    "category": "Clothing",
+    "subcategory": "Casual Wear",
+    "price_paise": 79900,
+    "stock": 0,
+    "is_active": 0,
+    "image_path": "images/products/P120.jpg"
+  },
+  "P121": {
+    "name": "Performance Road Running Shoes",
+    "category": "Footwear",
+    "subcategory": "Athletic Footwear",
+    "price_paise": 299900,
+    "stock": 22,
+    "is_active": 1,
+    "image_path": "images/products/P121.jpg"
+  },
+  "P122": {
+    "name": "Canvas Low-Top Sneakers",
+    "category": "Footwear",
+    "subcategory": "Casual Sneakers",
+    "price_paise": 149900,
+    "stock": 25,
+    "is_active": 1,
+    "image_path": "images/products/P122.jpg"
+  },
+  "P123": {
+    "name": "Retro Leather Court Sneakers",
+    "category": "Footwear",
+    "subcategory": "Casual Sneakers",
+    "price_paise": 239900,
+    "stock": 3,
+    "is_active": 1,
+    "image_path": "images/products/P123.jpg"
+  },
+  "P124": {
+    "name": "Derby Leather Formal Shoes",
+    "category": "Footwear",
+    "subcategory": "Formal Shoes",
+    "price_paise": 349900,
+    "stock": 10,
+    "is_active": 1,
+    "image_path": "images/products/P124.jpg"
+  },
+  "P125": {
+    "name": "Suede Handcrafted Penny Loafers",
+    "category": "Footwear",
+    "subcategory": "Formal Shoes",
+    "price_paise": 279900,
+    "stock": 0,
+    "is_active": 1,
+    "image_path": "images/products/P125.jpg"
+  },
+  "P126": {
+    "name": "Waterproof Trail Hiking Boots",
+    "category": "Footwear",
+    "subcategory": "Outdoor Footwear",
+    "price_paise": 389900,
+    "stock": 7,
+    "is_active": 1,
+    "image_path": "images/products/P126.jpg"
+  },
+  "P127": {
+    "name": "Cloud-Cushion Recovery Slides",
+    "category": "Footwear",
+    "subcategory": "Sandals & Slides",
+    "price_paise": 89900,
+    "stock": 35,
+    "is_active": 1,
+    "image_path": "images/products/P127.jpg"
+  },
+  "P128": {
+    "name": "Chelsea Leather Ankle Boots",
+    "category": "Footwear",
+    "subcategory": "Boots",
+    "price_paise": 319900,
+    "stock": 1,
+    "is_active": 1,
+    "image_path": "images/products/P128.jpg"
+  },
+  "P129": {
+    "name": "Breathable Slip-On Walkers",
+    "category": "Footwear",
+    "subcategory": "Casual Sneakers",
+    "price_paise": 169900,
+    "stock": 16,
+    "is_active": 1,
+    "image_path": "images/products/P129.jpg"
+  },
+  "P130": {
+    "name": "Dual-Strap Cork Footbed Sandals",
+    "category": "Footwear",
+    "subcategory": "Sandals & Slides",
+    "price_paise": 129900,
+    "stock": 12,
+    "is_active": 1,
+    "image_path": "images/products/P130.jpg"
+  },
+  "P131": {
+    "name": "Cast Iron Skillet 10-inch",
+    "category": "Home and Kitchen",
+    "subcategory": "Cookware",
+    "price_paise": 189900,
+    "stock": 16,
+    "is_active": 1,
+    "image_path": "images/products/P131.jpg"
+  },
+  "P132": {
+    "name": "Damascus Steel Chef Knife 8-in",
+    "category": "Home and Kitchen",
+    "subcategory": "Kitchen Tools",
+    "price_paise": 219900,
+    "stock": 20,
+    "is_active": 1,
+    "image_path": "images/products/P132.jpg"
+  },
+  "P133": {
+    "name": "Borosilicate Glass Water Bottle",
+    "category": "Home and Kitchen",
+    "subcategory": "Drinkware",
+    "price_paise": 59900,
+    "stock": 38,
+    "is_active": 1,
+    "image_path": "images/products/P133.jpg"
+  },
+  "P134": {
+    "name": "Stainless Steel Travel Tumbler",
+    "category": "Home and Kitchen",
+    "subcategory": "Drinkware",
+    "price_paise": 89900,
+    "stock": 4,
+    "is_active": 1,
+    "image_path": "images/products/P134.jpg"
+  },
+  "P135": {
+    "name": "6-Piece Glass Storage Set",
+    "category": "Home and Kitchen",
+    "subcategory": "Storage & Containers",
+    "price_paise": 139900,
+    "stock": 14,
+    "is_active": 1,
+    "image_path": "images/products/P135.jpg"
+  },
+  "P136": {
+    "name": "Bamboo Chopping Board Set",
+    "category": "Home and Kitchen",
+    "subcategory": "Kitchen Tools",
+    "price_paise": 79900,
+    "stock": 0,
+    "is_active": 1,
+    "image_path": "images/products/P136.jpg"
+  },
+  "P137": {
+    "name": "Stainless Steel French Press",
+    "category": "Home and Kitchen",
+    "subcategory": "Drinkware",
+    "price_paise": 119900,
+    "stock": 9,
+    "is_active": 1,
+    "image_path": "images/products/P137.jpg"
+  },
+  "P138": {
+    "name": "Precision Burr Manual Grinder",
+    "category": "Home and Kitchen",
+    "subcategory": "Kitchen Tools",
+    "price_paise": 159900,
+    "stock": 2,
+    "is_active": 1,
+    "image_path": "images/products/P138.jpg"
+  },
+  "P139": {
+    "name": "Matte Ceramic Ribbed Vase",
+    "category": "Home and Kitchen",
+    "subcategory": "Home Decor",
+    "price_paise": 74900,
+    "stock": 20,
+    "is_active": 1,
+    "image_path": "images/products/P139.jpg"
+  },
+  "P140": {
+    "name": "Ultrasonic Aroma Diffuser",
+    "category": "Home and Kitchen",
+    "subcategory": "Home Decor",
+    "price_paise": 149900,
+    "stock": 11,
+    "is_active": 1,
+    "image_path": "images/products/P140.jpg"
+  },
+  "P141": {
+    "name": "Hardcover Dotted Grid Journal",
+    "category": "Books and Stationery",
+    "subcategory": "Notebooks & Journals",
+    "price_paise": 39900,
+    "stock": 45,
+    "is_active": 1,
+    "image_path": "images/products/P141.jpg"
+  },
+  "P142": {
+    "name": "Brass Fine Fountain Pen",
+    "category": "Books and Stationery",
+    "subcategory": "Writing Instruments",
+    "price_paise": 89900,
+    "stock": 15,
+    "is_active": 1,
+    "image_path": "images/products/P142.jpg"
+  },
+  "P143": {
+    "name": "Quick-Dry Gel Pens (Pack of 6)",
+    "category": "Books and Stationery",
+    "subcategory": "Writing Instruments",
+    "price_paise": 34900,
+    "stock": 55,
+    "is_active": 1,
+    "image_path": "images/products/P143.jpg"
+  },
+  "P144": {
+    "name": "Solid Wood Desk Organizer",
+    "category": "Books and Stationery",
+    "subcategory": "Desk Accessories",
+    "price_paise": 99900,
+    "stock": 5,
+    "is_active": 1,
+    "image_path": "images/products/P144.jpg"
+  },
+  "P145": {
+    "name": "Pastel Highlighters (Pack of 8)",
+    "category": "Books and Stationery",
+    "subcategory": "Writing Instruments",
+    "price_paise": 27900,
+    "stock": 0,
+    "is_active": 1,
+    "image_path": "images/products/P145.jpg"
+  },
+  "P146": {
+    "name": "Watercolor Sketchbook 300 GSM",
+    "category": "Books and Stationery",
+    "subcategory": "Art & Craft",
+    "price_paise": 64900,
+    "stock": 19,
+    "is_active": 1,
+    "image_path": "images/products/P146.jpg"
+  },
+  "P147": {
+    "name": "Wire Mesh Document Sorter",
+    "category": "Books and Stationery",
+    "subcategory": "Desk Accessories",
+    "price_paise": 49900,
+    "stock": 25,
+    "is_active": 1,
+    "image_path": "images/products/P147.jpg"
+  },
+  "P148": {
+    "name": "Self-Healing Cutting Mat A3",
+    "category": "Books and Stationery",
+    "subcategory": "Art & Craft",
+    "price_paise": 74900,
+    "stock": 3,
+    "is_active": 1,
+    "image_path": "images/products/P148.jpg"
+  },
+  "P149": {
+    "name": "Minimalist Weekly Goal Planner",
+    "category": "Books and Stationery",
+    "subcategory": "Notebooks & Journals",
+    "price_paise": 44900,
+    "stock": 28,
+    "is_active": 1,
+    "image_path": "images/products/P149.jpg"
+  },
+  "P150": {
+    "name": "Aluminum Laptop Riser Stand",
+    "category": "Books and Stationery",
+    "subcategory": "Desk Accessories",
+    "price_paise": 129900,
+    "stock": 0,
+    "is_active": 0,
+    "image_path": "images/products/P150.jpg"
   }
 }

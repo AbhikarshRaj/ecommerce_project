@@ -1,8 +1,22 @@
 {% extends 'admin_base.html' %}
 {% block content %}
-<div class="page-heading"><div><span class="eyebrow">YOUR STORE, ORGANIZED</span><h1>Product catalog</h1>
-<p class="muted">Add a product, organize its category, and make it available to shoppers.</p></div>
-<div class="stats"><strong>{{ products|length }}</strong> products · <strong>{{ categories|length }}</strong> categories</div></div>
+{% set active_count = namespace(value=0) %}
+{% for id, p in products.items() %}
+  {% if p.is_active %}{% set active_count.value = active_count.value + 1 %}{% endif %}
+{% endfor %}
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">YOUR STORE, ORGANIZED</span>
+    <h1>Product catalog</h1>
+    <p class="muted">Add a product, organize categories, restock inventory, and manage product availability.</p>
+  </div>
+  <div class="stats">
+    <strong>{{ products|length }}</strong> products · 
+    <strong>{{ active_count.value }}</strong> active · 
+    <strong>{{ categories|length }}</strong> categories
+  </div>
+</div>
+
 <div class="admin-layout">
 <section class="panel">
   <h2>Add a product</h2><p class="muted">Select a suggested category or type a new name. Matching names are reused.</p>
@@ -44,11 +58,138 @@
   </li>{% else %}<li>No categories yet.</li>{% endfor %}</ul>
 </aside>
 </div>
-<section class="panel inventory"><h2>Saved products</h2><div class="table-scroll"><table>
-<thead><tr><th scope="col">Product</th><th scope="col">Category</th><th scope="col">Subcategory</th><th scope="col">Price</th><th scope="col">Stock</th></tr></thead>
-<tbody>{% for id, p in products.items() %}<tr><td>{{ p.name }}</td><td>{{ p.category }}</td><td>{{ p.subcategory or '—' }}</td><td>₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td><td>{{ p.stock }}</td></tr>
-{% else %}<tr><td colspan="5">Your first product will appear here.</td></tr>{% endfor %}</tbody>
-</table></div></section>
+
+<section class="panel inventory">
+  <div class="inventory-header">
+    <div>
+      <h2>Saved products ({{ products|length }})</h2>
+      <p class="muted">Manage catalog items, adjust stock, edit details, or deactivate items.</p>
+    </div>
+    <div class="inventory-controls">
+      <input type="search" id="inventory-search" placeholder="Filter saved products..." aria-label="Filter saved products" class="filter-search-input">
+      <div class="inventory-tabs">
+        <button type="button" class="tab-btn active" data-filter="all">All ({{ products|length }})</button>
+        <button type="button" class="tab-btn" data-filter="active">Active ({{ active_count.value }})</button>
+        <button type="button" class="tab-btn" data-filter="inactive">Inactive ({{ products|length - active_count.value }})</button>
+        <button type="button" class="tab-btn" data-filter="low-stock">Low / Out of stock</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-scroll">
+    <table id="inventory-table">
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Category</th>
+          <th scope="col">Subcategory</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, p in products.items() %}
+        <tr class="product-row"
+            data-id="{{ id }}"
+            data-name="{{ p.name|lower }}"
+            data-category="{{ p.category|lower }}"
+            data-subcategory="{{ (p.subcategory or '')|lower }}"
+            data-status="{{ 'active' if p.is_active else 'inactive' }}"
+            data-stock="{{ p.stock }}">
+          <td class="product-info-cell">
+            <div class="product-cell-flex">
+              <img src="{{ url_for('static', filename=p.image_path) }}" alt="" class="table-thumbnail" onerror="this.style.display='none'">
+              <div>
+                <strong>{{ p.name }}</strong>
+                <span class="product-row-id"><code>{{ id }}</code></span>
+              </div>
+            </div>
+          </td>
+          <td>{{ p.category }}</td>
+          <td>{{ p.subcategory or '—' }}</td>
+          <td class="price-cell">₹{{ p.price_paise // 100 }}.{{ '%02d'|format(p.price_paise % 100) }}</td>
+          <td>
+            {% if p.stock == 0 %}
+              <span class="badge out-of-stock">0 (Out of stock)</span>
+            {% elif p.stock <= 5 %}
+              <span class="badge low-stock">{{ p.stock }} (Low stock)</span>
+            {% else %}
+              <span class="badge in-stock">{{ p.stock }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.is_active %}
+              <span class="badge status-active">Active</span>
+            {% else %}
+              <span class="badge status-inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons-wrap">
+              <a href="{{ url_for('admin.edit_product', product_id=id) }}" class="action-btn edit-btn" title="Edit product details and stock">Edit</a>
+              <form method="post" action="{{ url_for('admin.toggle_status', product_id=id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% if p.is_active %}
+                  <button type="submit" class="action-btn deactivate-btn" title="Deactivate and hide from storefront">Deactivate</button>
+                {% else %}
+                  <button type="submit" class="action-btn activate-btn" title="Activate and show on storefront">Activate</button>
+                {% endif %}
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">Your first product will appear here.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <datalist id="category-options">{% for c in categories %}<option value="{{ c.name }}"></option>{% endfor %}</datalist>
 <script type="application/json" id="admin-taxonomy-data">{{ {'categories':categories,'subcategories':subcategories}|tojson }}</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('inventory-search');
+  const tabs = document.querySelectorAll('.inventory-tabs .tab-btn');
+  const rows = document.querySelectorAll('#inventory-table tbody tr.product-row');
+  let currentFilter = 'all';
+
+  function applyFilter() {
+    const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    rows.forEach(row => {
+      const name = row.dataset.name || '';
+      const category = row.dataset.category || '';
+      const subcategory = row.dataset.subcategory || '';
+      const id = (row.dataset.id || '').toLowerCase();
+      const status = row.dataset.status;
+      const stock = parseInt(row.dataset.stock, 10);
+
+      const matchesQuery = !query || name.includes(query) || category.includes(query) || subcategory.includes(query) || id.includes(query);
+      let matchesTab = true;
+      if (currentFilter === 'active') matchesTab = (status === 'active');
+      else if (currentFilter === 'inactive') matchesTab = (status === 'inactive');
+      else if (currentFilter === 'low-stock') matchesTab = (stock <= 5);
+
+      row.style.display = (matchesQuery && matchesTab) ? '' : 'none';
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilter);
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      applyFilter();
+    });
+  });
+});
+</script>
 {% endblock %}
