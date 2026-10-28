@@ -1,0 +1,173 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout | MarketLane</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+</head>
+<body>
+
+<header class="cart-header">
+    <div class="container cart-header-inner">
+        <a class="brand" href="{{ url_for('catalog') }}">
+            Market<span>Lane</span>
+        </a>
+        <a class="back-to-shop" href="{{ url_for('cart.cart_page') }}">
+            ← Back to cart
+        </a>
+    </div>
+</header>
+
+<main class="container checkout-main">
+
+    <div class="checkout-heading">
+        <span class="eyebrow section-eyebrow">ALMOST THERE</span>
+        <h1>Complete your order</h1>
+        <p>Enter your delivery details and review your order.</p>
+    </div>
+
+    {% if error %}
+        <div class="checkout-error" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if success %}
+        <div class="checkout-success">
+            {{ success }}
+        </div>
+    {% endif %}
+
+    <div class="checkout-layout">
+
+        <section class="checkout-form">
+            <h2>Delivery details</h2>
+
+            <form method="POST" action="{{ url_for('orders.place_order') }}">
+
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <input type="hidden" name="cart_version"
+                       value="{{ cart.version }}">
+
+                <input type="hidden" name="submission_token"
+                       value="{{ submission_token }}">
+
+                <input type="hidden" name="price_snapshot"
+                       value="{{ price_snapshot }}">
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="customer_name">Full name</label>
+                        <input type="text" id="customer_name"
+                               name="customer_name" maxlength="100"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" id="email" name="email"
+                               maxlength="120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone number</label>
+                        <input type="tel" id="phone" name="phone"
+                               maxlength="15" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="address">Full delivery address</label>
+                        <textarea id="address" name="address"
+                                  maxlength="500" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city"
+                               maxlength="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state"
+                               maxlength="100" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="postal_code">PIN code</label>
+                        <input type="text" id="postal_code"
+                               name="postal_code" maxlength="10"
+                               required>
+                    </div>
+
+                </div>
+
+                <h2>Payment method</h2>
+
+                <label class="payment-option">
+                    <input type="radio" name="payment_method"
+                           value="COD" checked>
+                    Cash on Delivery (COD)
+                </label>
+
+                <button type="submit" class="place-order-button">
+                    Place order
+                </button>
+
+            </form>
+        </section>
+
+        <aside class="checkout-summary">
+            <h2>Order summary</h2>
+
+            <div class="checkout-items">
+
+                {% for item in cart["items"] %}
+                    <div class="checkout-item">
+                        <div>
+                            <div class="checkout-item-name">
+                                {{ item.name }}
+                            </div>
+                            <div class="checkout-item-detail">
+                                Quantity: {{ item.quantity }}
+                            </div>
+                        </div>
+
+                        <strong>
+                            ₹{{ "%.2f"|format(item.line_total_paise / 100) }}
+                        </strong>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="checkout-total">
+                <span>Total</span>
+                <strong>
+                    ₹{{ "%.2f"|format(cart.subtotal_paise / 100) }}
+                </strong>
+            </div>
+
+            <p class="summary-note">
+                Payment will be collected upon delivery.
+            </p>
+
+            <a class="checkout-back" href="{{ url_for('cart.cart_page') }}">
+                ← Review cart
+            </a>
+        </aside>
+
+    </div>
+
+</main>
+
+</body>
+</html>

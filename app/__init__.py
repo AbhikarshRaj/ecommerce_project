@@ -104,6 +104,15 @@ def create_app(test_config=None):
     from .admin import admin, register_commands
     app.register_blueprint(admin)
     register_commands(app)
+
     from .cart import init_cart
     init_cart(app)
+
+    from .features.orders import orders, order_queue
+    app.register_blueprint(orders)
+
+    # Restore pending orders into the FIFO queue at application startup.
+    with app.app_context():
+        order_queue.rebuild(get_db())
+
     return app

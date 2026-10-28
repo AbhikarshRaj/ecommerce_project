@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Confirmed | MarketLane</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+</head>
+<body>
+
+<header class="cart-header">
+    <div class="container cart-header-inner">
+        <a class="brand" href="{{ url_for('catalog') }}">
+            Market<span>Lane</span>
+        </a>
+        <a class="back-to-shop" href="{{ url_for('catalog') }}">
+            Continue shopping
+        </a>
+    </div>
+</header>
+
+<main class="container checkout-main">
+
+    <section class="checkout-success">
+        <h1>Order placed successfully!</h1>
+        <p>Thank you for shopping with MarketLane.</p>
+    </section>
+
+    <section class="checkout-summary">
+        <h2>Order details</h2>
+
+        <p>
+            <strong>Order ID:</strong>
+            #{{ order.id }}
+        </p>
+
+        <p>
+            <strong>Order status:</strong>
+            {{ order.status }}
+        </p>
+
+        <p>
+            <strong>Payment method:</strong>
+            {{ order.payment_method }}
+        </p>
+
+        <p>
+            <strong>Total:</strong>
+            ₹{{ "%.2f"|format(order.total_paise / 100) }}
+        </p>
+
+        <h3>Delivery address</h3>
+
+        <p>{{ order.customer_name }}</p>
+        <p>{{ order.address }}</p>
+        <p>{{ order.city }}, {{ order.state }} - {{ order.postal_code }}</p>
+        <p>{{ order.phone }}</p>
+
+        <h3>Items ordered</h3>
+
+        {% for item in items %}
+            <div class="checkout-item">
+                <div>
+                    <strong>{{ item.product_name }}</strong>
+                    <p>Quantity: {{ item.quantity }}</p>
+                </div>
+
+                <strong>
+                    ₹{{ "%.2f"|format(item.line_total_paise / 100) }}
+                </strong>
+            </div>
+        {% endfor %}
+
+        <a class="checkout-back" href="{{ url_for('catalog') }}">
+            Continue shopping
+        </a>
+    </section>
+
+</main>
+
+</body>
+</html>

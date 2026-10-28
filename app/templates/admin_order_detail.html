@@ -1,0 +1,127 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="admin-page">
+
+    <h1>Order #{{ order.id }}</h1>
+
+    <p>
+        <strong>Current status:</strong>
+        {{ order.status }}
+    </p>
+
+    <section>
+        <h2>Customer details</h2>
+
+        <p><strong>Name:</strong> {{ order.customer_name }}</p>
+        <p><strong>Email:</strong> {{ order.email }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+    </section>
+
+    <section>
+        <h2>Delivery address</h2>
+
+        <p>{{ order.address }}</p>
+        <p>{{ order.city }}, {{ order.state }} - {{ order.postal_code }}</p>
+    </section>
+
+    <section>
+        <h2>Order information</h2>
+
+        <p><strong>Payment:</strong> {{ order.payment_method }}</p>
+        <p><strong>Created:</strong> {{ order.created_at }}</p>
+        <p>
+            <strong>Total:</strong>
+            ₹{{ "%.2f"|format(order.total_paise / 100) }}
+        </p>
+    </section>
+
+    <section>
+        <h2>Items ordered</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Unit price</th>
+                    <th>Quantity</th>
+                    <th>Line total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+                        <td>
+                            ₹{{ "%.2f"|format(item.unit_price_paise / 100) }}
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            ₹{{ "%.2f"|format(item.line_total_paise / 100) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Update status</h2>
+
+        {% if next_status %}
+            <form method="POST"
+                  action="{{ url_for('orders.update_order_status',
+                                     order_id=order.id) }}">
+
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <input type="hidden" name="new_status"
+                       value="{{ next_status }}">
+
+                <button type="submit">
+                    Mark as {{ next_status }}
+                </button>
+            </form>
+        {% else %}
+            <p>This order has completed its delivery lifecycle.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Status history</h2>
+
+        {% if events %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Previous status</th>
+                        <th>New status</th>
+                        <th>Changed at</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>{{ event.old_status or "Created" }}</td>
+                            <td>{{ event.new_status }}</td>
+                            <td>{{ event.changed_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No status changes recorded yet.</p>
+        {% endif %}
+    </section>
+
+    <p>
+        <a href="{{ url_for('orders.admin_orders') }}">
+            Back to all orders
+        </a>
+    </p>
+
+</div>
+{% endblock %}

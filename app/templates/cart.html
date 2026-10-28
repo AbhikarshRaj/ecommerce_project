@@ -43,11 +43,14 @@
       <p class="summary-note">Delivery charges and any additional taxes are not calculated at this stage.</p>
       <div class="summary-total"><span>Subtotal</span><strong id="cart-total">₹0.00</strong></div>
       <p class="stock-note">Items in your cart are not reserved. Prices and availability are checked when the cart loads.</p>
-      <button class="checkout-pending" type="button" disabled>Checkout — coming next</button>
+<a class="checkout-pending"
+   href="{{ url_for('orders.checkout') }}">
+    Proceed to checkout
+</a>
       <p class="summary-note">This cart does not place an order or take payment.</p>
     </aside>
   </div>
-  <button type="button" id="cart-retry" class="button button-dark" hidden>Retry loading cart</button>
+  <button type="button" id="cart-retry" class="b utton button-dark" hidden>Retry loading cart</button>
 </main>
 <dialog id="clear-dialog" class="clear-dialog">
   <h2>Clear your cart?</h2><p>All items will be removed. You can undo this change.</p>
