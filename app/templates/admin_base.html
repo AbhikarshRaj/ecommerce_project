@@ -10,7 +10,10 @@
 <body>
 <header class="admin-header"><div class="shell header-row">
   <a class="brand" href="{{ url_for('catalog') }}">MarketLane <small>ADMIN</small></a>
-  <div class="header-actions"><a href="{{ url_for('catalog') }}">View storefront ↗</a>
+  <div class="header-actions">
+  <a href="{{ url_for('admin.dashboard') }}">Catalog</a>
+  <a href="{{ url_for('inventory.index') }}">Inventory (Task 1)</a>
+  <a href="{{ url_for('catalog') }}">View storefront ↗</a>
   {% if session.get('admin_revision') %}
   <form method="post" action="{{ url_for('admin.logout') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
