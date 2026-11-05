@@ -1,0 +1,101 @@
+﻿id,name,category,subcategory,brand,price_rupees,price_paise,colour,gender,size,material,stock,is_active,image_path
+ELEC001,Airdopes 141 Wireless Earbuds,Electronics,Audio,boAt,999,99900,Black,Unisex,One Size,Plastic,35,1,images/products/ELEC001.png
+ELEC002,Rockerz 450 Bluetooth Headphones,Electronics,Audio,boAt,1499,149900,Black,Unisex,One Size,Plastic,24,1,images/products/placeholder.png
+ELEC003,Nirvana Ion Earbuds,Electronics,Audio,boAt,1999,199900,White,Unisex,One Size,Plastic,18,1,images/products/placeholder.png
+ELEC004,Buds VS104 Pro Earbuds,Electronics,Audio,Noise,1299,129900,White,Unisex,One Size,Plastic,22,1,images/products/placeholder.png
+ELEC005,ColorFit Pulse 3 Smartwatch,Electronics,Wearables,Noise,1499,149900,Blue,Unisex,One Size,Silicone,20,1,images/products/placeholder.png
+ELEC006,ColorFit Icon 2 Smartwatch,Electronics,Wearables,Noise,1799,179900,Black,Unisex,One Size,Silicone,16,1,images/products/placeholder.png
+ELEC007,Wireless Charging Stand,Electronics,Accessories,Portronics,1899,189900,Black,Unisex,One Size,Plastic,12,1,images/products/placeholder.png
+ELEC008,Universal Laptop Stand,Electronics,Accessories,Portronics,799,79900,Silver,Unisex,One Size,Aluminium,25,1,images/products/ELEC008.png
+ELEC009,Gaming Keyboard Mouse Combo,Electronics,Computer Accessories,Zebronics,1199,119900,Black,Unisex,One Size,Plastic,14,1,images/products/placeholder.png
+ELEC010,Companion Keyboard Mouse Combo,Electronics,Computer Accessories,Zebronics,699,69900,Black,Unisex,One Size,Plastic,30,1,images/products/placeholder.png
+ELEC011,Laptop Sleeve 15.6 inch,Electronics,Computer Accessories,Lenovo,899,89900,Grey,Unisex,15.6 inch,Polyester,11,1,images/products/placeholder.png
+ELEC012,10000mAh Power Bank,Electronics,Power Banks,Ambrane,999,99900,Black,Unisex,One Size,Plastic,28,1,images/products/placeholder.png
+ELEC013,Stylo 20000mAh Power Bank,Electronics,Power Banks,Ambrane,1699,169900,Blue,Unisex,One Size,Plastic,15,1,images/products/placeholder.png
+ELEC014,10W Fast Charger,Electronics,Chargers,Portronics,499,49900,White,Unisex,One Size,Plastic,40,1,images/products/ELEC014.png
+ELEC015,22.5W Power Bank,Electronics,Power Banks,Portronics,1299,129900,Black,Unisex,One Size,Plastic,19,1,images/products/placeholder.png
+ELEC016,USB-C Wired Earphones,Electronics,Audio,Realme,599,59900,White,Unisex,One Size,Plastic,32,1,images/products/placeholder.png
+ELEC017,Buds Wireless 3 Neo,Electronics,Audio,OnePlus,1699,169900,Green,Unisex,One Size,Plastic,13,1,images/products/placeholder.png
+ELEC018,Smartphone Tripod Stand,Electronics,Accessories,Digitek,799,79900,Black,Unisex,One Size,Aluminium,17,1,images/products/placeholder.png
+ELEC019,Ring Light with Tripod,Electronics,Accessories,Digitek,1299,129900,Black,Unisex,One Size,Metal,10,1,images/products/placeholder.png
+ELEC020,Wireless Optical Mouse,Electronics,Computer Accessories,HP,649,64900,Black,Unisex,One Size,Plastic,26,1,images/products/placeholder.png
+CLTH001,Men's Solid Cotton Crew Neck T-Shirt,Clothing,T-Shirts,Max,499,49900,Navy Blue,Men,S-XXL,Cotton,30,1,images/products/CLTH001.png
+CLTH002,Women's Regular Fit Cotton T-Shirt,Clothing,T-Shirts,Max,449,44900,Pink,Women,XS-XL,Cotton,28,1,images/products/placeholder.png
+CLTH003,Men's Slim Fit Casual Shirt,Clothing,Shirts,Allen Solly,1299,129900,White,Men,S-XXL,Cotton,14,1,images/products/placeholder.png
+CLTH004,Women's Printed Straight Kurta,Clothing,Kurtas,Biba,1499,149900,Blue,Women,XS-XXL,Cotton,12,1,images/products/placeholder.png
+CLTH005,Women's Anarkali Kurta,Clothing,Kurtas,W for Woman,2199,219900,Maroon,Women,XS-XXL,Rayon,9,1,images/products/placeholder.png
+CLTH006,Men's Checked Casual Shirt,Clothing,Shirts,Peter England,1199,119900,Green,Men,S-XXL,Cotton,16,1,images/products/placeholder.png
+CLTH007,Men's Regular Fit Jeans,Clothing,Jeans,Spykar,1799,179900,Dark Blue,Men,28-38,Denim,13,1,images/products/placeholder.png
+CLTH008,Women's High-Rise Skinny Jeans,Clothing,Jeans,Lee,1999,199900,Black,Women,26-34,Denim,11,1,images/products/placeholder.png
+CLTH009,Women's A-Line Printed Dress,Clothing,Dresses,Aurelia,1599,159900,Yellow,Women,XS-XXL,Rayon,10,1,images/products/CLTH009.png
+CLTH010,Men's Cotton Polo T-Shirt,Clothing,T-Shirts,Louis Philippe,999,99900,Black,Men,S-XXL,Cotton,18,1,images/products/placeholder.png
+CLTH011,Women's Leggings,Clothing,Leggings,Go Colors,599,59900,Black,Women,S-XXL,Cotton Blend,25,1,images/products/placeholder.png
+CLTH012,Men's Cotton Track Pants,Clothing,Track Pants,Jockey,999,99900,Grey,Men,S-XXL,Cotton Blend,20,1,images/products/placeholder.png
+CLTH013,Women's Palazzo Pants,Clothing,Trousers,Biba,899,89900,Beige,Women,S-XXL,Rayon,15,1,images/products/placeholder.png
+CLTH014,Men's Formal Trousers,Clothing,Trousers,Van Heusen,1499,149900,Charcoal,Men,30-40,Polyester Blend,12,1,images/products/placeholder.png
+CLTH015,Women's Printed Top,Clothing,Tops,AND,1199,119900,Red,Women,XS-XL,Viscose,13,1,images/products/placeholder.png
+CLTH016,Men's Lightweight Hoodie,Clothing,Winterwear,Campus Sutra,1299,129900,Olive,Men,S-XXL,Fleece,10,1,images/products/placeholder.png
+CLTH017,Women's Cardigan,Clothing,Winterwear,Monte Carlo,1899,189900,Cream,Women,S-XL,Acrylic,8,1,images/products/CLTH017.png
+CLTH018,Men's Cotton Boxer Shorts,Clothing,Innerwear,Jockey,499,49900,Navy Blue,Men,S-XXL,Cotton,22,1,images/products/placeholder.png
+CLTH019,Women's Cotton Night Suit,Clothing,Sleepwear,Dreamz,1299,129900,Lavender,Women,S-XXL,Cotton,9,1,images/products/placeholder.png
+CLTH020,Unisex Basic Sweatshirt,Clothing,Winterwear,Max,899,89900,Black,Unisex,S-XXL,Cotton Blend,17,1,images/products/placeholder.png
+FOOT001,Men's Everyday Sports Shoes,Footwear,Sports Shoes,Campus,1499,149900,Black,Men,06-Nov,Mesh,20,1,images/products/placeholder.png
+FOOT002,Women's Running Shoes,Footwear,Sports Shoes,Sparx,1699,169900,Pink,Women,04-Sep,Mesh,16,1,images/products/placeholder.png
+FOOT003,Men's Casual Lace-Up Sneakers,Footwear,Casual Shoes,Bata,1999,199900,White,Men,06-Nov,Synthetic,14,1,images/products/placeholder.png
+FOOT004,Women's Casual Sneakers,Footwear,Casual Shoes,Campus,1399,139900,White,Women,04-Sep,Synthetic,18,1,images/products/placeholder.png
+FOOT005,Men's Formal Shoes,Footwear,Formal Shoes,Bata,2499,249900,Brown,Men,06-Nov,Leather,10,1,images/products/FOOT005.png
+FOOT006,Women's Office Wear Flats,Footwear,Flats,Bata,999,99900,Black,Women,04-Sep,Synthetic,22,1,images/products/placeholder.png
+FOOT007,Men's Flip-Flops,Footwear,Flip-Flops,Relaxo,299,29900,Navy Blue,Men,06-Nov,EVA,35,1,images/products/placeholder.png
+FOOT008,Women's Printed Flip-Flops,Footwear,Flip-Flops,Flite,349,34900,Pink,Women,04-Sep,EVA,30,1,images/products/FOOT008.png
+FOOT009,Men's Walking Shoes,Footwear,Walking Shoes,Sparx,1299,129900,Grey,Men,06-Nov,Mesh,19,1,images/products/placeholder.png
+FOOT010,Women's Slip-On Walking Shoes,Footwear,Walking Shoes,Relaxo,899,89900,Navy Blue,Women,04-Sep,Mesh,17,1,images/products/placeholder.png
+FOOT011,Men's Running Shoes,Footwear,Sports Shoes,Asian,1199,119900,Blue,Men,06-Nov,Mesh,21,1,images/products/placeholder.png
+FOOT012,Women's Training Shoes,Footwear,Sports Shoes,Campus,1799,179900,Black,Women,04-Sep,Mesh,12,1,images/products/placeholder.png
+FOOT013,Men's High-Top Canvas Shoes,Footwear,Casual Shoes,Red Tape,2299,229900,Black,Men,06-Nov,Canvas,9,1,images/products/placeholder.png
+FOOT014,Women's Ballerina Flats,Footwear,Flats,Liberty,799,79900,Beige,Women,04-Sep,Synthetic,15,1,images/products/placeholder.png
+FOOT015,Men's Leather Sandals,Footwear,Sandals,Bata,1299,129900,Tan,Men,06-Nov,Leather,13,1,images/products/placeholder.png
+FOOT016,Women's Wedge Sandals,Footwear,Sandals,Metro,1599,159900,Gold,Women,04-Sep,Synthetic,11,1,images/products/placeholder.png
+FOOT017,Men's Clogs,Footwear,Clogs,Sparx,699,69900,Olive,Men,06-Nov,EVA,18,1,images/products/FOOT017.png
+FOOT018,Women's Slides,Footwear,Slides,Relaxo,499,49900,Lavender,Women,04-Sep,EVA,24,1,images/products/placeholder.png
+FOOT019,Kids' Velcro School Shoes,Footwear,School Shoes,Bata,899,89900,Black,Kids,01-May,Synthetic,20,1,images/products/placeholder.png
+FOOT020,Unisex Classic Canvas Sneakers,Footwear,Casual Shoes,U.S. Polo Assn.,2199,219900,Navy Blue,Unisex,05-Oct,Canvas,8,1,images/products/placeholder.png
+HOME001,Stainless Steel Pressure Cooker 3L,Home and Kitchen,Cookware,Prestige,1899,189900,Silver,Unisex,3 L,Stainless Steel,12,1,images/products/placeholder.png
+HOME002,Non-Stick Fry Pan 24cm,Home and Kitchen,Cookware,Pigeon,699,69900,Black,Unisex,24 cm,Aluminium,20,1,images/products/placeholder.png
+HOME003,Stainless Steel Casserole 2L,Home and Kitchen,Serveware,Milton,999,99900,Silver,Unisex,2 L,Stainless Steel,16,1,images/products/placeholder.png
+HOME004,Insulated Water Bottle 1L,Home and Kitchen,Bottles,Milton,499,49900,Blue,Unisex,1 L,Stainless Steel,28,1,images/products/HOME004.png
+HOME005,Thermosteel Flask 750ml,Home and Kitchen,Flasks,Cello,799,79900,Black,Unisex,750 ml,Stainless Steel,19,1,images/products/placeholder.png
+HOME006,Plastic Storage Container Set,Home and Kitchen,Storage,Cello,599,59900,Transparent,Unisex,Set of 5,Food Grade Plastic,22,1,images/products/placeholder.png
+HOME007,Electric Kettle 1.5L,Home and Kitchen,Appliances,Prestige,1199,119900,Black,Unisex,1.5 L,Stainless Steel,14,1,images/products/placeholder.png
+HOME008,Mixer Grinder 500W,Home and Kitchen,Appliances,Pigeon,2299,229900,White,Unisex,500 W,Plastic and Steel,9,1,images/products/placeholder.png
+HOME009,Hand Blender,Home and Kitchen,Appliances,Butterfly,999,99900,White,Unisex,One Size,Plastic and Steel,13,1,images/products/placeholder.png
+HOME010,Dinner Set 18 Pieces,Home and Kitchen,Dinnerware,La Opala,2499,249900,White,Unisex,18 Pieces,Opal Glass,7,1,images/products/placeholder.png
+HOME011,Ceramic Coffee Mug Set,Home and Kitchen,Dinnerware,Cello,499,49900,Multicolour,Unisex,Set of 2,Ceramic,25,1,images/products/placeholder.png
+HOME012,Cotton Double Bedsheet,Home and Kitchen,Bedding,Spaces,1499,149900,Floral,Unisex,Double,Cotton,10,1,images/products/placeholder.png
+HOME013,Microfiber Pillow Pair,Home and Kitchen,Bedding,SleepyCat,899,89900,White,Unisex,Standard,Microfiber,17,1,images/products/placeholder.png
+HOME014,Decorative Cushion Cover Set,Home and Kitchen,Home Decor,Home Centre,599,59900,Mustard,Unisex,Set of 2,Cotton,21,1,images/products/HOME014.png
+HOME015,LED Desk Lamp,Home and Kitchen,Lighting,Wipro,799,79900,White,Unisex,One Size,Plastic,18,1,images/products/placeholder.png
+HOME016,Rechargeable Emergency Light,Home and Kitchen,Lighting,Eveready,699,69900,White,Unisex,One Size,Plastic,15,1,images/products/placeholder.png
+HOME017,Plastic Laundry Basket,Home and Kitchen,Storage,Nilkamal,549,54900,Grey,Unisex,30 L,Plastic,20,1,images/products/placeholder.png
+HOME018,Kitchen Knife Set,Home and Kitchen,Kitchen Tools,Wonderchef,999,99900,Black,Unisex,Set of 3,Stainless Steel,11,1,images/products/placeholder.png
+HOME019,Silicone Spatula Set,Home and Kitchen,Kitchen Tools,Prestige,399,39900,Red,Unisex,Set of 3,Silicone,26,1,images/products/HOME019.png
+HOME020,Vacuum Insulated Lunch Box,Home and Kitchen,Lunch Boxes,Milton,649,64900,Blue,Unisex,900 ml,Stainless Steel,23,1,images/products/placeholder.png
+BOOK001,Long Notebook Single Line 6 Pack,Books and Stationery,Notebooks,Classmate,240,24000,Assorted,Unisex,172 Pages,Paper,40,1,images/products/placeholder.png
+BOOK002,Spiral Notebook A4 4 Pack,Books and Stationery,Notebooks,Classmate,320,32000,Assorted,Unisex,A4,Paper,35,1,images/products/placeholder.png
+BOOK003,Practical Record Book,Books and Stationery,Notebooks,Navneet,85,8500,Blue,Unisex,160 Pages,Paper,30,1,images/products/placeholder.png
+BOOK004,Drawing Book A4,Books and Stationery,Art Supplies,Navneet,75,7500,White,Unisex,A4,Paper,28,1,images/products/placeholder.png
+BOOK005,Geometry Box,Books and Stationery,School Supplies,Camlin,120,12000,Blue,Unisex,One Size,Plastic and Metal,32,1,images/products/BOOK005.png
+BOOK006,Premium Colour Pencils 24 Shades,Books and Stationery,Art Supplies,Faber-Castell,299,29900,Multicolour,Unisex,24 Shades,Wood,18,1,images/products/placeholder.png
+BOOK007,Oil Pastels 25 Shades,Books and Stationery,Art Supplies,Camel,150,15000,Multicolour,Unisex,25 Shades,Wax,25,1,images/products/placeholder.png
+BOOK008,Brush Pen Set 12 Colours,Books and Stationery,Art Supplies,Camlin,199,19900,Multicolour,Unisex,12 Pieces,Plastic,20,1,images/products/placeholder.png
+BOOK009,Exam Pad A4,Books and Stationery,School Supplies,Classmate,110,11000,Black,Unisex,A4,Plastic,24,1,images/products/placeholder.png
+BOOK010,Ball Pen Blue 10 Pack,Books and Stationery,Writing Tools,Cello,100,10000,Blue,Unisex,10 Pieces,Plastic,45,1,images/products/BOOK010.png
+BOOK011,Gel Pen Blue 5 Pack,Books and Stationery,Writing Tools,Reynolds,75,7500,Blue,Unisex,5 Pieces,Plastic,38,1,images/products/placeholder.png
+BOOK012,Permanent Marker Set 4 Pack,Books and Stationery,Writing Tools,Camlin,120,12000,Assorted,Unisex,4 Pieces,Plastic,26,1,images/products/placeholder.png
+BOOK013,Sticky Notes 5 Colour Pack,Books and Stationery,Office Supplies,Oddy,99,9900,Multicolour,Unisex,5 Pads,Paper,30,1,images/products/placeholder.png
+BOOK014,Document Folder Set 10 Pack,Books and Stationery,Office Supplies,Solo,180,18000,Assorted,Unisex,10 Pieces,Plastic,22,1,images/products/placeholder.png
+BOOK015,A5 Hardcover Journal,Books and Stationery,Notebooks,Factor Notes,299,29900,Brown,Unisex,A5,Paper,16,1,images/products/placeholder.png
+BOOK016,Academic Planner,Books and Stationery,Planners,Factor Notes,349,34900,Navy Blue,Unisex,A5,Paper,14,1,images/products/placeholder.png
+BOOK017,Desk Organiser,Books and Stationery,Office Supplies,Solo,249,24900,Black,Unisex,One Size,Plastic,19,1,images/products/BOOK017.png
+BOOK018,Whiteboard 30 x 45 cm,Books and Stationery,Office Supplies,DOMS,399,39900,White,Unisex,30 x 45 cm,Board,12,1,images/products/placeholder.png
+BOOK019,HB Pencil Pack 10,Books and Stationery,Writing Tools,Apsara,60,6000,Yellow,Unisex,10 Pieces,Wood,50,1,images/products/placeholder.png
+BOOK020,Eraser and Sharpener Combo Pack,Books and Stationery,School Supplies,DOMS,45,4500,Assorted,Unisex,Pack of 5,Rubber and Plastic,42,1,images/products/placeholder.png

@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description"
+          content="View and manage your saved MarketLane products.">
+
+    <title>My Wishlist | MarketLane</title>
+
+    <!-- Main website styling -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Cart styling -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/cart.css') }}">
+
+    <!-- Wishlist styling -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/wishlist.css') }}">
+
+    <!-- Cart functionality -->
+    <script defer
+            src="{{ url_for('static', filename='js/cart.js') }}"></script>
+
+    <!-- Wishlist functionality -->
+    <script defer
+            src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
+
+</head>
+
+<body>
+
+    <!-- Accessibility link -->
+    <a class="skip-link" href="#main">
+        Skip to wishlist
+    </a>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="cart-header">
+
+        <div class="container cart-header-inner">
+
+            <!-- Website logo -->
+            <a class="brand" href="{{ url_for('catalog') }}">
+                Market<span>Lane</span>
+            </a>
+
+            <!-- Continue shopping -->
+            <a class="back-to-shop"
+               href="{{ url_for('catalog') }}">
+                ← Continue shopping
+            </a>
+
+            <!-- Wishlist header button -->
+            <a href="{{ url_for('wishlist.wishlist_page') }}"
+               class="wishlist-header-button"
+               id="wishlist-button"
+               aria-label="Wishlist">
+
+                <span aria-hidden="true">♥</span>
+                <span>Wishlist</span>
+
+                <span class="wishlist-count"
+                      id="wishlist-count">0</span>
+
+            </a>
+
+            <!-- Cart button -->
+            <a class="cart-button"
+               id="cart-button"
+               href="{{ url_for('cart.cart_page') }}"
+               aria-label="Shopping cart">
+
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M3 3h2l2.5 12h10L21 6H6"></path>
+                    <circle cx="9" cy="20" r="1"></circle>
+                    <circle cx="18" cy="20" r="1"></circle>
+                </svg>
+
+                <span>Cart</span>
+                <span class="cart-count">0</span>
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="container wishlist-main" id="main">
+
+        <!-- Page heading -->
+        <section class="wishlist-heading">
+
+            <span class="eyebrow section-eyebrow">
+                YOUR SAVED COLLECTION
+            </span>
+
+            <div class="wishlist-title-row">
+
+                <div>
+                    <h1>My Wishlist</h1>
+
+                    <p>
+                        Keep track of the products you love.
+                    </p>
+                </div>
+
+                <span id="wishlist-item-label">
+                    Loading...
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- Status message -->
+        <div id="wishlist-message"
+             class="wishlist-message"
+             role="status"
+             aria-live="polite"
+             hidden>
+        </div>
+
+
+        <!-- Loading message -->
+        <div id="wishlist-loading" role="status">
+            Loading your saved products...
+        </div>
+
+
+        <!-- ================= EMPTY WISHLIST ================= -->
+
+        <section class="wishlist-empty"
+                 id="wishlist-empty"
+                 hidden>
+
+            <div class="wishlist-empty-icon"
+                 aria-hidden="true">
+                ♡
+            </div>
+
+            <h2>Your wishlist is empty</h2>
+
+            <p>
+                You haven't saved any products yet.
+                Explore MarketLane and add products you like.
+            </p>
+
+            <a href="{{ url_for('catalog') }}"
+               class="button button-dark">
+                Explore products
+            </a>
+
+        </section>
+
+
+        <!-- ================= WISHLIST PRODUCTS ================= -->
+
+        <section id="wishlist-content" hidden>
+
+            <div class="wishlist-section-heading">
+
+                <h2>Saved Products</h2>
+
+                <a href="{{ url_for('catalog') }}">
+                    Continue shopping →
+                </a>
+
+            </div>
+
+            <!-- JavaScript will insert saved products here -->
+            <div class="wishlist-grid"
+                 id="wishlist-items">
+
+            </div>
+
+        </section>
+
+
+        <!-- Retry button -->
+        <button type="button"
+                id="wishlist-retry"
+                class="button button-dark"
+                hidden>
+
+            Retry loading wishlist
+
+        </button>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-bottom">
+
+            <span>
+                © <span id="year"></span> MarketLane Storefront
+            </span>
+
+            <span>
+                Everyday essentials, thoughtfully brought together.
+            </span>
+
+        </div>
+
+    </footer>
+
+
+    <!-- Toast notification -->
+    <div class="toast"
+         id="toast"
+         role="status"
+         hidden>
+    </div>
+
+
+    <!-- Footer year -->
+    <script>
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>

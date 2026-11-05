@@ -17,9 +17,11 @@ def create_app(test_config=None):
     )
     if test_config:
         app.config.update(test_config)
+
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
     Path(app.config["UPLOAD_FOLDER"]).mkdir(parents=True, exist_ok=True)
+
     if not app.config.get("SECRET_KEY"):
         secret_file = Path(app.instance_path) / "session.key"
         try:
@@ -28,6 +30,7 @@ def create_app(test_config=None):
         except FileExistsError:
             pass
         app.config["SECRET_KEY"] = secret_file.read_text(encoding="utf-8").strip()
+
     app.teardown_appcontext(close_db)
 
     with app.app_context():
@@ -37,10 +40,10 @@ def create_app(test_config=None):
         with db:
             deleted_count = cleanup_old_logs(db, retention_days=90)
 
-        app.logger.info(
-            "Activity log cleanup completed. Deleted %d old records.",
-            deleted_count
-        )
+    app.logger.info(
+        "Activity log cleanup completed. Deleted %d old records.",
+        deleted_count,
+    )
 
     app.extensions["catalog_store"] = CatalogStore()
 
@@ -48,6 +51,7 @@ def create_app(test_config=None):
         if "csrf" not in session:
             session["csrf"] = secrets.token_hex(32)
         return session["csrf"]
+
     app.jinja_env.globals["csrf_token"] = csrf_token
 
     @app.before_request
@@ -60,16 +64,28 @@ def create_app(test_config=None):
 
     def taxonomy():
         db = get_db()
-        categories = [dict(r) for r in db.execute("SELECT * FROM categories ORDER BY name COLLATE NOCASE")]
-        subcategories = [dict(r) for r in db.execute("SELECT * FROM subcategories ORDER BY name COLLATE NOCASE")]
+        categories = [
+            dict(r) for r in db.execute(
+                "SELECT * FROM categories ORDER BY name COLLATE NOCASE"
+            )
+        ]
+        subcategories = [
+            dict(r) for r in db.execute(
+                "SELECT * FROM subcategories ORDER BY name COLLATE NOCASE"
+            )
+        ]
         return categories, subcategories
 
     @app.route("/")
     def catalog():
         categories, subcategories = taxonomy()
         products = app.extensions["catalog_store"].select()
-        return render_template("catalog.html", products=products,
-                               categories=categories, subcategories=subcategories)
+        return render_template(
+            "catalog.html",
+            products=products,
+            categories=categories,
+            subcategories=subcategories,
+        )
 
     @app.get("/api/catalog")
     def catalog_api():
@@ -78,35 +94,97 @@ def create_app(test_config=None):
             if not value or value == "all":
                 return None
             if not value.isascii() or not value.isdigit() or len(value) > 12:
-                abort(400)
+                abort(400, description=f"Invalid {key} value.")
             return int(value)
-        products = app.extensions["catalog_store"].select(
-            selected_id("category"), selected_id("subcategory"), request.args.get("q", "")[:200])
-        return jsonify(html=render_template("_product_cards.html", products=products), count=len(products))
 
-    @app.post('/contact')
+        def selected_text(key, max_length=100):
+            value = request.args.get(key, "").strip()
+            if len(value) > max_length:
+                abort(400, description=f"{key} is too long.")
+            return value or None
+
+        def selected_stock():
+            value = request.args.get("in_stock", "").strip().casefold()
+            if not value or value == "all":
+                return None
+            if value in ("1", "true", "yes", "in_stock", "available"):
+                return True
+            if value in ("0", "false", "no", "out_of_stock", "unavailable"):
+                return False
+            abort(400, description="Invalid in_stock value.")
+
+        sort_by = request.args.get("sort_by", "").strip().casefold() or None
+        allowed_sorts = {"price_asc", "price_desc", "name_asc", "alphabetical"}
+        if sort_by is not None and sort_by not in allowed_sorts:
+            abort(400, description="Invalid sort_by value.")
+
+        min_price = selected_text("min_price", 20)
+        max_price = selected_text("max_price", 20)
+
+        try:
+            products = app.extensions["catalog_store"].select(
+                category=selected_id("category"),
+                subcategory=selected_id("subcategory"),
+                query=request.args.get("q", "")[:200],
+                brand=selected_text("brand"),
+                colour=selected_text("colour"),
+                gender=selected_text("gender"),
+                size=selected_text("size"),
+                material=selected_text("material"),
+                min_price=min_price,
+                max_price=max_price,
+                in_stock=selected_stock(),
+                sort_by=sort_by,
+            )
+        except ValueError as error:
+            abort(400, description=str(error))
+
+        store = app.extensions["catalog_store"]
+        filter_options = store.get_filter_options(products)
+
+        return jsonify(
+            html=render_template("_product_cards.html", products=products),
+            count=len(products),
+            filters=filter_options,
+        )
+
+    @app.post("/contact")
     def submit_contact():
-        name = clean_name(request.form.get('name', ''))
-        email = request.form.get('email', '').strip()
-        subject = clean_name(request.form.get('subject', ''))
-        message = request.form.get('message', '').strip()
+        name = clean_name(request.form.get("name", ""))
+        email = request.form.get("email", "").strip()
+        subject = clean_name(request.form.get("subject", ""))
+        message = request.form.get("message", "").strip()
 
         if not name or len(name) > 100:
-            return jsonify(success=False, error='Please enter your name (up to 100 characters).'), 400
-        if not email or '@' not in email or len(email) > 120:
-            return jsonify(success=False, error='Please enter a valid email address.'), 400
+            return jsonify(
+                success=False,
+                error="Please enter your name (up to 100 characters).",
+            ), 400
+        if not email or "@" not in email or len(email) > 120:
+            return jsonify(
+                success=False,
+                error="Please enter a valid email address.",
+            ), 400
         if not message or len(message) < 5 or len(message) > 2000:
-            return jsonify(success=False, error='Message must be between 5 and 2000 characters.'), 400
+            return jsonify(
+                success=False,
+                error="Message must be between 5 and 2000 characters.",
+            ), 400
 
         db = get_db()
         with db:
             db.execute(
-                'INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
-                (name, email, subject[:120], message)
+                "INSERT INTO contact_messages (name, email, subject, message) "
+                "VALUES (?, ?, ?, ?)",
+                (name, email, subject[:120], message),
             )
+
         return jsonify(
             success=True,
-            message=f'Thank you, {name}! Your message has been received. Our team will get back to you shortly.'
+            message=(
+                f"Thank you, {name}! Your message has been received. "
+                "Our team will get back to you shortly."
+            ),
         )
 
     @app.errorhandler(413)
@@ -120,11 +198,16 @@ def create_app(test_config=None):
     from .cart import init_cart
     init_cart(app)
 
+    # Register order management functionality
     from .features.orders import orders, order_queue
     app.register_blueprint(orders)
 
     # Restore pending orders into the FIFO queue at application startup.
     with app.app_context():
         order_queue.rebuild(get_db())
+
+    # Register wishlist functionality
+    from .wishlist import wishlist
+    app.register_blueprint(wishlist)
 
     return app

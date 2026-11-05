@@ -3,3 +3,15 @@ __pycache__/
 instance/
 .venv/
 venv/
+
+# Environment and secrets
+.env
+.env.local
+
+# Python and application logs
+*.log
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+Thumbs.db

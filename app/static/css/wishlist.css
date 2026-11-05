@@ -1,0 +1,336 @@
+
+/* =========================================================
+   MARKETLANE - WISHLIST STYLES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. Wishlist heart button on product cards
+   --------------------------------------------------------- */
+
+.product-image-wrap {
+    position: relative;
+}
+
+.wishlist-heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #ffffff;
+    color: #555555;
+
+    font-size: 27px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.wishlist-heart:hover {
+    transform: scale(1.1);
+    color: #e53950;
+}
+
+.wishlist-heart.is-wishlisted {
+    color: #e53950;
+}
+
+.wishlist-heart:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.wishlist-heart:focus-visible {
+    outline: 3px solid #e53950;
+    outline-offset: 3px;
+}
+
+
+/* ---------------------------------------------------------
+   2. Wishlist button beside Cart in header
+   --------------------------------------------------------- */
+
+.wishlist-header-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #222222;
+
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.wishlist-header-button:hover {
+    background: #fff1f2;
+    color: #e53950;
+    border-color: #e53950;
+}
+
+.wishlist-header-button > span:first-child {
+    font-size: 21px;
+    line-height: 1;
+}
+
+
+/* ---------------------------------------------------------
+   3. Wishlist count badge
+   --------------------------------------------------------- */
+
+.wishlist-count {
+    min-width: 20px;
+    height: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
+
+    border-radius: 50%;
+
+    background: #e53950;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   4. Responsive layout
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .wishlist-header-button {
+        padding: 8px 10px;
+        gap: 4px;
+        font-size: 12px;
+    }
+
+    .wishlist-header-button > span:first-child {
+        font-size: 19px;
+    }
+
+    .wishlist-heart {
+        width: 36px;
+        height: 36px;
+        font-size: 24px;
+    }
+}
+
+
+/* =========================================================
+   WISHLIST PAGE STYLING
+   ========================================================= */
+
+.wishlist-main {
+    min-height: 65vh;
+    padding-top: 45px;
+    padding-bottom: 65px;
+}
+
+.wishlist-heading {
+    margin-bottom: 30px;
+}
+
+.wishlist-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.wishlist-title-row h1 {
+    margin: 0 0 8px;
+}
+
+.wishlist-title-row p {
+    margin: 0;
+    color: #777777;
+}
+
+#wishlist-item-label {
+    color: #777777;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.wishlist-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.wishlist-section-heading h2 {
+    margin: 0;
+}
+
+.wishlist-section-heading a {
+    color: #333333;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.wishlist-section-heading a:hover {
+    color: #e53950;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.wishlist-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #eeeeee;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 14px;
+}
+
+.wishlist-card-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #f7f7f7;
+}
+
+.wishlist-card h3 {
+    margin: 12px 0 8px;
+    font-size: 16px;
+}
+
+.wishlist-card-price {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+.wishlist-card-stock {
+    color: #23834b;
+    font-size: 13px;
+}
+
+.wishlist-card-stock.out-of-stock {
+    color: #d23b3b;
+}
+
+.wishlist-card-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 14px;
+}
+
+.wishlist-card-actions button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.wishlist-add-cart {
+    background: #222222;
+    color: #ffffff;
+    border: 1px solid #222222;
+}
+
+.wishlist-remove {
+    background: #ffffff;
+    color: #d23b3b;
+    border: 1px solid #dddddd;
+}
+
+.wishlist-empty {
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.wishlist-empty-icon {
+    font-size: 65px;
+    color: #e53950;
+    margin-bottom: 15px;
+}
+
+.wishlist-empty p {
+    color: #777777;
+    margin: 12px 0 25px;
+}
+
+.wishlist-message {
+    margin: 15px 0;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+@media (max-width: 900px) {
+    .wishlist-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .wishlist-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .wishlist-main {
+        padding-top: 25px;
+    }
+
+    .wishlist-title-row {
+        align-items: flex-start;
+    }
+
+    .wishlist-card-actions {
+        flex-direction: column;
+    }
+
+    .wishlist-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

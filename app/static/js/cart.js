@@ -153,7 +153,29 @@
             const result = await response.json();
             if (Array.isArray(result.items)) { state = result; render(); }
             else if (!response.ok) throw new Error(result.error || 'Unable to save cart. Reload before retrying.');
-            notify(result.error || result.message || 'Cart updated.', !response.ok);
+            let notification = result.error || result.message || 'Cart updated.';
+
+if (!result.error && result.message) {
+    const update = result.message.match(/^(.*):\s*(\d+)\s*→\s*(\d+)$/);
+
+    if (update) {
+        const [, productName, before, after] = update;
+        const oldQuantity = Number(before);
+        const newQuantity = Number(after);
+
+        if (oldQuantity === 0 && newQuantity > 0) {
+            notification = `${productName} added to your cart.`;
+        } else if (newQuantity === 0 && oldQuantity > 0) {
+            notification = `${productName} removed from your cart.`;
+        } else {
+            notification = `${productName} quantity updated to ${newQuantity}.`;
+        }
+    } else if (action === 'clear') {
+        notification = 'Your cart has been cleared.';
+    }
+}
+
+notify(notification, !response.ok);
         } catch (error) {
             ready = false;
             notify(error.message || 'Connection interrupted. Reload to check your cart before retrying.', true);

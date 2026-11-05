@@ -33,6 +33,13 @@ CREATE TABLE IF NOT EXISTS products (
     price_paise INTEGER NOT NULL CHECK(price_paise >= 0),
     stock INTEGER NOT NULL CHECK(stock >= 0),
     image_path TEXT NOT NULL,
+    brand TEXT,
+    colour TEXT,
+    gender TEXT,
+    size TEXT,
+    material TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1
+        CHECK(is_active IN (0, 1)),
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(subcategory_id, category_id)
         REFERENCES subcategories(id, category_id)
@@ -73,6 +80,19 @@ CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS wishlist_items (
+    customer_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    added_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (customer_id, product_id),
+    FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_wishlist_customer
+ON wishlist_items(customer_id, added_at);
 
 CREATE TABLE IF NOT EXISTS activity_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -195,38 +215,57 @@ def subcategory_id(db, parent_id, name):
 
     db.execute(
         """INSERT OR IGNORE INTO subcategories
-        (category_id,name,normalized_name) VALUES (?,?,?)""",
+           (category_id,name,normalized_name) VALUES (?,?,?)""",
         (parent_id, name, normalized(name))
     )
 
     return db.execute(
         """SELECT id FROM subcategories
-        WHERE category_id=? AND normalized_name=?""",
+           WHERE category_id=? AND normalized_name=?""",
         (parent_id, normalized(name))
     ).fetchone()["id"]
+
+
+def migrate_products_table(db):
+    """
+    Add missing catalog columns without deleting existing products.
+    """
+
+    existing_columns = {
+        row["name"]
+        for row in db.execute("PRAGMA table_info(products)").fetchall()
+    }
+
+    new_columns = {
+        "brand": "TEXT",
+        "colour": "TEXT",
+        "gender": "TEXT",
+        "size": "TEXT",
+        "material": "TEXT",
+        "is_active": (
+            "INTEGER NOT NULL DEFAULT 1 CHECK(is_active IN (0, 1))"
+        ),
+    }
+
+    for column_name, column_definition in new_columns.items():
+        if column_name not in existing_columns:
+            db.execute(
+                f"ALTER TABLE products ADD COLUMN "
+                f"{column_name} {column_definition}"
+            )
 
 
 def initialize():
     db = get_db()
 
-    # Create database tables and indexes.
+    # Create all required tables, indexes, triggers and constraints.
     db.executescript(SCHEMA)
 
-    # Add is_active column to existing products if it does not exist.
-    columns = {
-        row["name"]
-        for row in db.execute("PRAGMA table_info(products)")
-    }
+    # Add missing catalog columns to older databases.
+    with db:
+        migrate_products_table(db)
 
-    if "is_active" not in columns:
-        db.execute("""
-            ALTER TABLE products
-            ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1
-            CHECK(is_active IN (0, 1))
-        """)
-        db.commit()
-
-    # Import original products only once.
+    # Import the original seed catalog only once.
     if not db.execute(
         "SELECT 1 FROM settings WHERE key='seed_imported'"
     ).fetchone():
@@ -243,22 +282,26 @@ def initialize():
             for pid, product in products.items():
                 parent = category_id(db, product["category"])
 
-                db.execute("""
+                db.execute(
+                    """
                     INSERT OR IGNORE INTO products
                     (id, name, category_id, price_paise, stock, image_path)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (
-                    pid,
-                    product["name"],
-                    parent,
-                    product["price_paise"],
-                    product["stock"],
+                    """,
                     (
-                        "uploads/products/f36de128e3794fad881b81f669ca8856.jpg"
-                        if pid == "P101"
-                        else f"images/products/{pid}.jpg"
+                        pid,
+                        product["name"],
+                        parent,
+                        product["price_paise"],
+                        product["stock"],
+                        (
+                            "uploads/products/"
+                            "f36de128e3794fad881b81f669ca8856.jpg"
+                            if pid == "P101"
+                            else f"images/products/{pid}.jpg"
+                        )
                     )
-                ))
+                )
 
             db.execute(
                 "INSERT INTO settings VALUES ('seed_imported', 'yes')"
