@@ -9,13 +9,21 @@
     <p class="muted">Add a product, organize its category, and make it available to shoppers.</p>
 
     <!-- Task 6: Direct navigation to operational activity logs -->
-    <div style="margin-top: 16px;">
-      <a href="{{ url_for('admin.activity_logs') }}"
-         class="button secondary"
-         style="display: inline-block; padding: 12px 20px; text-decoration: none;">
+    
+<div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <a href="{{ url_for('admin.activity_logs') }}"
+       class="button secondary"
+       style="display: inline-block; padding: 12px 20px; text-decoration: none;">
         View Activity Logs
-      </a>
-    </div>
+    </a>
+
+    <a href="{{ url_for('orders.admin_orders') }}"
+       class="button secondary"
+       style="display: inline-block; padding: 12px 20px; text-decoration: none;">
+        Manage Orders
+    </a>
+</div>
+
   </div>
 
   <div class="stats">
